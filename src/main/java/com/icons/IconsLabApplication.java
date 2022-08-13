@@ -1,4 +1,4 @@
-package com.icons.iconslab;
+package com.icons;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
