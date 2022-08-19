@@ -1,7 +1,7 @@
 package com.icons.controller;
 
 import com.icons.dto.ContinentDTO;
-import com.icons.service.implement.ContinentService;
+import com.icons.service.ContinentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +16,17 @@ public class ContinentController {
     @Autowired
     private ContinentService continentService;
 
+    @PostMapping("/save")
+    public ResponseEntity<ContinentDTO> save(@RequestBody ContinentDTO dto) {
+        try {
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(continentService.save(dto));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @GetMapping("/list")
     public ResponseEntity<List<ContinentDTO>> getAll() {
         return ResponseEntity
@@ -23,10 +34,11 @@ public class ContinentController {
                 .body(continentService.getAll());
     }
 
-    @PostMapping("/save")
-    public ResponseEntity<ContinentDTO> save(@RequestBody ContinentDTO dto) {
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<String> handleElementFoundException(Exception exception) {
         return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(continentService.save(dto));
+                .status(HttpStatus.BAD_REQUEST)
+                .body(exception.getMessage());
     }
 }

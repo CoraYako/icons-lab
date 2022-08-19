@@ -8,6 +8,8 @@ import org.hibernate.annotations.Where;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -28,10 +30,13 @@ public class IconEntity implements Serializable {
 
     private String image;
 
+    @NotNull
+    @NotEmpty(message = "Description required.")
     private String denomination;
 
     @DateTimeFormat(pattern = "yyyy/MM/dd")
     @Column(name = "creation_date")
+    @NotNull(message = "Creation date needs to be set.")
     private LocalDate creation;
 
     private Integer height;
@@ -39,6 +44,7 @@ public class IconEntity implements Serializable {
     private String history;
 
     @ManyToMany(mappedBy = "icons", cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
+    @NotNull(message = "Provide the country/ies where the icon is present.")
     private List<CountryEntity> countries = new ArrayList<>();
 
     private Boolean deleted = Boolean.FALSE;

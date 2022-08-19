@@ -7,6 +7,8 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -27,17 +29,23 @@ public class CountryEntity implements Serializable {
 
     private String image;
 
+    @NotNull
+    @NotEmpty(message = "Must provide a name for the country.")
     private String denomination;
 
     private BigInteger population;
 
+    @NotNull(message = "Area can't be null.")
     private Double area;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "continent_id", insertable = false, updatable = false)
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "continent_id")
+    @NotNull(message = "Must specify a continent.")
     private ContinentEntity continent;
 
-/*    @Column(name = "continent_id", nullable = false)
+    /*@Column(name = "continent_id")
+    @NotNull
+    @NotEmpty(message = "Set the id of the continent.")
     private String continentId;*/
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
@@ -45,16 +53,4 @@ public class CountryEntity implements Serializable {
     private List<IconEntity> icons = new ArrayList<>();
 
     private Boolean deleted = Boolean.FALSE;
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final CountryEntity other = (CountryEntity) obj;
-        return other.id.equals(this.id);
-    }
 }

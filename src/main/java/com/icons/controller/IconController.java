@@ -1,7 +1,7 @@
 package com.icons.controller;
 
 import com.icons.dto.IconDTO;
-import com.icons.service.implement.IconService;
+import com.icons.service.IconService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,17 +19,17 @@ public class IconController {
     @Autowired
     private IconService iconService;
 
-    @GetMapping("/list")
-    public ResponseEntity<List<IconDTO>> getAll() {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(iconService.getAll());
-    }
-
     @PostMapping("/save")
     public ResponseEntity<IconDTO> save(IconDTO dto) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(iconService.save(dto));
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<List<IconDTO>> getAll() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(iconService.getAll());
     }
 }

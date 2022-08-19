@@ -3,7 +3,9 @@ package com.icons.mapper;
 import com.icons.dto.CountryDTO;
 import com.icons.dto.IconDTO;
 import com.icons.entity.CountryEntity;
+import com.icons.entity.IconEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -26,6 +28,7 @@ public class CountryMapper {
     }
 
     @Autowired
+    @Lazy
     public void setIconMapper(IconMapper iconMapper) {
         this.iconMapper = iconMapper;
     }
@@ -42,7 +45,7 @@ public class CountryMapper {
         dto.setDenomination(entity.getDenomination());
         dto.setPopulation(entity.getPopulation());
         dto.setArea(entity.getArea());
-        /*dto.setContinentId(entity.getContinentId());*/
+        dto.setContinent(continentMapper.entityBasic2DTOBasic(entity.getContinent()));
 
         if (loadIcons) {
             List<IconDTO> iconsDTOList = iconMapper.entityList2DTOList(entity.getIcons(), false);
@@ -59,15 +62,26 @@ public class CountryMapper {
         entity.setDenomination(dto.getDenomination());
         entity.setPopulation(dto.getPopulation());
         entity.setArea(dto.getArea());
-        /*entity.setContinentId(dto.getContinentId());*/
+        entity.setContinent(continentMapper.DTO2Entity(dto.getContinent()));
 
         if (loadIcons) {
-            entity.setIcons(
-                    iconMapper.DTOList2EntityList(dto.getIcons(), false)
-            );
+            List<IconEntity> iconsEntityList = iconMapper.DTOList2EntityList(dto.getIcons(), false);
+            entity.setIcons(iconsEntityList);
         }
 
         return entity;
+    }
+
+    public CountryDTO entityBasic2DTOBasic(CountryEntity entity) {
+        CountryDTO dto = new CountryDTO();
+
+        dto.setId(entity.getId());
+        dto.setImage(entity.getImage());
+        dto.setDenomination(entity.getDenomination());
+        dto.setPopulation(entity.getPopulation());
+        dto.setArea(entity.getArea());
+
+        return dto;
     }
 
     public List<CountryDTO> entityList2DTOList(List<CountryEntity> entityList, boolean loadIcons) {

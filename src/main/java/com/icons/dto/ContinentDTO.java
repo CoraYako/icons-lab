@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -16,5 +17,5 @@ public class ContinentDTO {
     private String id;
     private String image;
     private String denomination;
-    private List<CountryDTO> countries;
+    private List<CountryDTO> countries = new ArrayList<>();
 }

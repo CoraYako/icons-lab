@@ -29,9 +29,12 @@ public class ContinentMapper {
 
         entity.setImage(dto.getImage());
         entity.setDenomination(dto.getDenomination());
-        entity.setCountries(
-                countryMapper.DTOList2EntityList(dto.getCountries(), false)
-        );
+
+        if (dto.getCountries() != null || !dto.getCountries().isEmpty()) {
+            entity.setCountries(
+                    getCountryMapper().DTOList2EntityList(dto.getCountries(), false)
+            );
+        }
 
         return entity;
     }
@@ -42,9 +45,12 @@ public class ContinentMapper {
         dto.setId(entity.getId());
         dto.setImage(entity.getImage());
         dto.setDenomination(entity.getDenomination());
-        dto.setCountries(
-                countryMapper.entityList2DTOList(entity.getCountries(), false)
-        );
+
+        if (entity.getCountries() != null || !entity.getCountries().isEmpty()) {
+            dto.setCountries(
+                    countryMapper.entityList2DTOList(entity.getCountries(), false)
+            );
+        }
 
         return dto;
     }
@@ -58,7 +64,7 @@ public class ContinentMapper {
         return entity;
     }
 
-    public ContinentDTO EntityBasic2DTOBasic(ContinentEntity entity) {
+    public ContinentDTO entityBasic2DTOBasic(ContinentEntity entity) {
         ContinentDTO dto = new ContinentDTO();
 
         dto.setId(entity.getId());

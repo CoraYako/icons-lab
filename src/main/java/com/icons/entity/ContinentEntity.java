@@ -5,6 +5,8 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +24,10 @@ public class ContinentEntity implements Serializable {
 
     private String image;
 
+    @NotNull
+    @NotEmpty(message = "Provide a name to the continent.")
     private String denomination;
 
-    @OneToMany(mappedBy = "continent",fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @OneToMany(mappedBy = "continent",fetch = FetchType.LAZY/*, cascade = {CascadeType.REFRESH}*/)
     private List<CountryEntity> countries = new ArrayList<>();
 }

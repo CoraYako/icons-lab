@@ -1,4 +1,4 @@
-package com.icons.service.implement;
+package com.icons.service;
 
 import com.icons.dto.IconDTO;
 
