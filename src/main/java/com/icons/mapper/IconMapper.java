@@ -1,5 +1,6 @@
 package com.icons.mapper;
 
+import com.icons.dto.CountryDTO;
 import com.icons.dto.IconDTO;
 import com.icons.entity.IconEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,10 +37,10 @@ public class IconMapper {
         dto.setHeight(entity.getHeight());
         dto.setHistory(entity.getHistory());
 
-        /*if (loadCountries) {
-            List<CountryDTO> dtoList = countryMapper.entityList2DTOList(entity.getCountries(), false);
+        if (loadCountries) {
+            List<CountryDTO> dtoList = countryMapper.entityList2DTOListBasic(entity.getCountries());
             dto.setCountries(dtoList);
-        }*/
+        }
 
         return dto;
     }
@@ -55,11 +56,11 @@ public class IconMapper {
         entity.setHeight(dto.getHeight());
         entity.setHistory(dto.getHistory());
 
-        /*if (loadCountries) {
+        if (loadCountries) {
             entity.setCountries(
                     countryMapper.DTOList2EntityList(dto.getCountries(), false)
             );
-        }*/
+        }
 
         return entity;
     }
@@ -80,9 +81,13 @@ public class IconMapper {
         return entityList;
     }
 
-    private LocalDate string2LocalDate(String stringDate) {
+    public LocalDate string2LocalDate(String stringDate) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 
         return LocalDate.parse(stringDate, formatter);
+    }
+
+    public String localDate2String(LocalDate date) {
+        return date.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
     }
 }

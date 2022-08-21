@@ -43,7 +43,7 @@ public class IconEntity implements Serializable {
 
     private String history;
 
-    @ManyToMany(mappedBy = "icons", cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "icons", fetch = FetchType.LAZY)
     @NotNull(message = "Provide the country/ies where the icon is present.")
     private List<CountryEntity> countries = new ArrayList<>();
 

@@ -1,6 +1,7 @@
 package com.icons.service;
 
 import com.icons.dto.IconDTO;
+import com.icons.entity.IconEntity;
 
 import java.util.List;
 
@@ -11,4 +12,8 @@ public interface IconService {
     List<IconDTO> getAll();
 
     void delete(String id);
+
+    IconDTO update(String id, IconDTO dto);
+
+    IconEntity findById(String id);
 }

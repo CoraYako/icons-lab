@@ -28,6 +28,6 @@ public class ContinentEntity implements Serializable {
     @NotEmpty(message = "Provide a name to the continent.")
     private String denomination;
 
-    @OneToMany(mappedBy = "continent",fetch = FetchType.LAZY/*, cascade = {CascadeType.REFRESH}*/)
+    @OneToMany(mappedBy = "continent",fetch = FetchType.LAZY)
     private List<CountryEntity> countries = new ArrayList<>();
 }

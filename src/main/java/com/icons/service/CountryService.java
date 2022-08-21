@@ -2,6 +2,7 @@ package com.icons.service;
 
 import com.icons.dto.CountryDTO;
 import com.icons.entity.CountryEntity;
+import com.icons.entity.IconEntity;
 
 import java.util.List;
 
@@ -18,4 +19,6 @@ public interface CountryService {
     CountryEntity findByIdEntity(String id);
 
     CountryEntity addContinent(String id, String idContinent);
+
+    CountryEntity addIcon(CountryEntity entity, IconEntity iconEntity);
 }

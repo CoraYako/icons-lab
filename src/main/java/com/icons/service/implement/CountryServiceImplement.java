@@ -3,6 +3,7 @@ package com.icons.service.implement;
 import com.icons.dto.CountryDTO;
 import com.icons.entity.ContinentEntity;
 import com.icons.entity.CountryEntity;
+import com.icons.entity.IconEntity;
 import com.icons.mapper.CountryMapper;
 import com.icons.repository.CountryRepository;
 import com.icons.service.ContinentService;
@@ -91,5 +92,14 @@ public class CountryServiceImplement implements CountryService {
         entity.setContinent(continentEntity);
 
         return countryRepository.save(entity);
+    }
+
+    @Override
+    public CountryEntity addIcon(CountryEntity entity, IconEntity iconEntity) {
+        CountryEntity entityFound = findByIdEntity(entity.getId());
+
+        entityFound.getIcons().add(iconEntity);
+
+        return countryRepository.save(entityFound);
     }
 }

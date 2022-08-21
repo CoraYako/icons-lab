@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -19,5 +20,5 @@ public class IconDTO {
     private String creation;
     private Integer height;
     private String history;
-    private List<CountryDTO> countries;
+    private List<CountryDTO> countries = new ArrayList<>();
 }

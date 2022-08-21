@@ -43,12 +43,7 @@ public class CountryEntity implements Serializable {
     @NotNull(message = "Must specify a continent.")
     private ContinentEntity continent;
 
-    /*@Column(name = "continent_id")
-    @NotNull
-    @NotEmpty(message = "Set the id of the continent.")
-    private String continentId;*/
-
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE, CascadeType.DETACH})
     @JoinTable(name = "rel_icon_country", joinColumns = @JoinColumn(name = "country_id"), inverseJoinColumns = @JoinColumn(name = "icon_id"))
     private List<IconEntity> icons = new ArrayList<>();
 

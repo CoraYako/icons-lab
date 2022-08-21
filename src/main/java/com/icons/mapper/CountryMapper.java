@@ -80,6 +80,9 @@ public class CountryMapper {
         dto.setDenomination(entity.getDenomination());
         dto.setPopulation(entity.getPopulation());
         dto.setArea(entity.getArea());
+        dto.setContinent(
+                continentMapper.entityBasic2DTOBasic(entity.getContinent())
+        );
 
         return dto;
     }
@@ -88,6 +91,14 @@ public class CountryMapper {
         List<CountryDTO> dtoList = new ArrayList<>();
 
         entityList.forEach(entity -> dtoList.add(entity2DTO(entity, loadIcons)));
+
+        return dtoList;
+    }
+
+    public List<CountryDTO> entityList2DTOListBasic(List<CountryEntity> entityList) {
+        List<CountryDTO> dtoList = new ArrayList<>();
+
+        entityList.forEach(entity -> dtoList.add(entityBasic2DTOBasic(entity)));
 
         return dtoList;
     }
