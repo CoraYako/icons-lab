@@ -10,9 +10,13 @@ public interface CountryService {
 
     CountryDTO save(CountryDTO dto);
 
+    CountryDTO update(String id, CountryDTO dto);
+
     List<CountryDTO> getAll();
 
     void delete(String id);
+
+    List<CountryDTO> getByFilters(String name, String continent, List<String> icons, String order);
 
     CountryDTO findByIdDTO(String id);
 

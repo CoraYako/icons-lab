@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -20,5 +21,5 @@ public class CountryDTO {
     private BigInteger population;
     private Double area;
     private ContinentDTO continent;
-    private List<IconDTO> icons;
+    private List<IconDTO> icons = new ArrayList<>();
 }

@@ -18,23 +18,23 @@ public class CountryMapper {
 
     private ContinentMapper continentMapper;
 
+    public ContinentMapper getContinentMapper() {
+        return continentMapper;
+    }
+
     @Autowired
     public void setContinentMapper(ContinentMapper continentMapper) {
         this.continentMapper = continentMapper;
     }
 
-    public ContinentMapper getContinentMapper() {
-        return continentMapper;
+    public IconMapper getIconMapper() {
+        return iconMapper;
     }
 
     @Autowired
     @Lazy
     public void setIconMapper(IconMapper iconMapper) {
         this.iconMapper = iconMapper;
-    }
-
-    public IconMapper getIconMapper() {
-        return iconMapper;
     }
 
     public CountryDTO entity2DTO(CountryEntity entity, boolean loadIcons) {
@@ -62,8 +62,10 @@ public class CountryMapper {
         entity.setDenomination(dto.getDenomination());
         entity.setPopulation(dto.getPopulation());
         entity.setArea(dto.getArea());
-        entity.setContinent(continentMapper.DTO2Entity(dto.getContinent()));
 
+        if (dto.getContinent() != null) {
+            entity.setContinent(continentMapper.DTO2Entity(dto.getContinent()));
+        }
         if (loadIcons) {
             List<IconEntity> iconsEntityList = iconMapper.DTOList2EntityList(dto.getIcons(), false);
             entity.setIcons(iconsEntityList);
@@ -86,6 +88,21 @@ public class CountryMapper {
 
         return dto;
     }
+
+    /*public CountryEntity DTOBasic2EntityBasic(CountryDTO dto) {
+        CountryEntity entity = new CountryEntity();
+
+        entity.setId(dto.getId());
+        entity.setImage(dto.getImage());
+        dto.setDenomination(entity.getDenomination());
+        dto.setPopulation(entity.getPopulation());
+        dto.setArea(entity.getArea());
+        dto.setContinent(
+                continentMapper.entityBasic2DTOBasic(entity.getContinent())
+        );
+
+        return dto;
+    }*/
 
     public List<CountryDTO> entityList2DTOList(List<CountryEntity> entityList, boolean loadIcons) {
         List<CountryDTO> dtoList = new ArrayList<>();

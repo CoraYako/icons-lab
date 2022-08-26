@@ -37,6 +37,20 @@ public class IconController {
                 .body(iconService.getAll());
     }
 
+    @GetMapping
+    public ResponseEntity<List<IconDTO>> getByFilters(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String date,
+            @RequestParam(required = false) List<String> countries,
+            @RequestParam(required = false, defaultValue = "ASC") String order
+    ) {
+        List<IconDTO> dtoList = iconService.getByFilters(name, date, countries, order);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(dtoList);
+    }
+
     @PutMapping("/delete/{id}")
     public ResponseEntity<Void> delete(@PathVariable String id) {
         iconService.delete(id);
