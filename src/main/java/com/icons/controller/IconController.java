@@ -1,12 +1,13 @@
 package com.icons.controller;
 
 import com.icons.dto.IconDTO;
-import com.icons.service.IconService;
+import com.icons.service.implement.IconServiceImplement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -14,27 +15,27 @@ import java.util.List;
 public class IconController {
 
     @Autowired
-    private IconService iconService;
+    private IconServiceImplement iconServiceImplement;
 
     @PostMapping("/save")
-    public ResponseEntity<IconDTO> save(@RequestBody IconDTO dto) {
+    public ResponseEntity<IconDTO> save(@Valid @RequestBody IconDTO dto) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(iconService.save(dto));
+                .body(iconServiceImplement.save(dto));
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<IconDTO> update(@PathVariable String id, @RequestBody IconDTO dto) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(iconService.update(id, dto));
+                .body(iconServiceImplement.update(id, dto));
     }
 
     @GetMapping("/list")
     public ResponseEntity<List<IconDTO>> getAll() {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(iconService.getAll());
+                .body(iconServiceImplement.getAll());
     }
 
     @GetMapping
@@ -44,8 +45,7 @@ public class IconController {
             @RequestParam(required = false) List<String> countries,
             @RequestParam(required = false, defaultValue = "ASC") String order
     ) {
-        List<IconDTO> dtoList = iconService.getByFilters(name, date, countries, order);
-
+        List<IconDTO> dtoList = iconServiceImplement.getByFilters(name, date, countries, order);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(dtoList);
@@ -53,8 +53,7 @@ public class IconController {
 
     @PutMapping("/delete/{id}")
     public ResponseEntity<Void> delete(@PathVariable String id) {
-        iconService.delete(id);
-
+        iconServiceImplement.delete(id);
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
                 .build();

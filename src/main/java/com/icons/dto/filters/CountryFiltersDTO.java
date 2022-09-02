@@ -12,6 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 public class CountryFiltersDTO {
+
     private String name;
     private String continent;
     private List<String> icons;

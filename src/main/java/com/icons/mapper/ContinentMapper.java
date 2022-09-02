@@ -12,16 +12,12 @@ import java.util.List;
 @Component
 public class ContinentMapper {
 
-    private CountryMapper countryMapper;
+    private final CountryMapper countryMapper;
 
     @Autowired
     @Lazy
-    public void setCountryMapper(CountryMapper countryMapper) {
+    public ContinentMapper(CountryMapper countryMapper) {
         this.countryMapper = countryMapper;
-    }
-
-    public CountryMapper getCountryMapper() {
-        return countryMapper;
     }
 
     public ContinentEntity DTO2Entity(ContinentDTO dto) {
@@ -32,7 +28,7 @@ public class ContinentMapper {
 
         if (dto.getCountries() != null || !dto.getCountries().isEmpty()) {
             entity.setCountries(
-                    getCountryMapper().DTOList2EntityList(dto.getCountries(), false)
+                    countryMapper.DTOList2EntityList(dto.getCountries(), false)
             );
         }
 

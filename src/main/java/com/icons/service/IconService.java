@@ -15,9 +15,9 @@ public interface IconService {
 
     IconDTO update(String id, IconDTO dto);
 
-    IconEntity findById(String id);
+    IconEntity getEntityById(String id);
 
-    IconEntity findByName(String name);
+    IconEntity getEntityByName(String name);
 
     List<IconDTO> getByFilters(String name, String date, List<String> countries, String order);
 }

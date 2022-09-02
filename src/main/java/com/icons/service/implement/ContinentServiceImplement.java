@@ -1,49 +1,39 @@
 package com.icons.service.implement;
 
 import com.icons.dto.ContinentDTO;
-import com.icons.dto.CountryDTO;
 import com.icons.entity.ContinentEntity;
 import com.icons.entity.CountryEntity;
+import com.icons.exception.ParamNotFoundException;
 import com.icons.mapper.ContinentMapper;
 import com.icons.repository.ContinentRepository;
 import com.icons.service.ContinentService;
-import com.icons.service.CountryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityExistsException;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ContinentServiceImplement implements ContinentService {
 
-    private CountryService countryService;
+    private final ContinentMapper continentMapper;
+    private final ContinentRepository continentRepository;
 
     @Autowired
-    private ContinentMapper continentMapper;
-
-    @Autowired
-    @Lazy
-    public void setCountryService(CountryService countryService) {
-        this.countryService = countryService;
+    public ContinentServiceImplement(ContinentMapper continentMapper, ContinentRepository continentRepository) {
+        this.continentMapper = continentMapper;
+        this.continentRepository = continentRepository;
     }
-
-    public CountryService getCountryService() {
-        return countryService;
-    }
-
-    @Autowired
-    private ContinentRepository continentRepository;
 
     @Override
-    @Transactional(rollbackFor = {Exception.class})
-    public ContinentDTO save(ContinentDTO dto) throws Exception {
-        ContinentEntity repositoryResponse = findByName(dto);
+    @Transactional(rollbackFor = {RuntimeException.class, Exception.class})
+    public ContinentDTO save(ContinentDTO dto) {
+        ContinentEntity repositoryResponse = getEntityByName(dto.getDenomination());
 
         if (repositoryResponse != null && dto.getDenomination().equalsIgnoreCase(repositoryResponse.getDenomination())) {
-            throw new Exception("The continent already exist.");
+            throw new EntityExistsException("The continent already exist.");
         }
 
         ContinentEntity entity = continentMapper.DTO2Entity(dto);
@@ -56,46 +46,31 @@ public class ContinentServiceImplement implements ContinentService {
     @Transactional(readOnly = true)
     public List<ContinentDTO> getAll() {
         List<ContinentEntity> entityList = continentRepository.findAll();
-
         return continentMapper.entityList2DTOList(entityList);
     }
 
     @Override
+    @Transactional(rollbackFor = {RuntimeException.class, Exception.class})
     public void addCountry(String id, CountryEntity countryEntity) {
-        ContinentEntity entity = findByIdEntity(id);
+        ContinentEntity entity = getEntityById(id);
         entity.getCountries().add(countryEntity);
-
         continentRepository.save(entity);
     }
 
     @Override
-    public ContinentDTO addCountryList(ContinentDTO dto, List<CountryDTO> countryDTOList) {
-
-
-        return dto;
+    @Transactional(readOnly = true)
+    public ContinentEntity getEntityById(String id) {
+        Optional<ContinentEntity> response = continentRepository.findById(id);
+        if (response.isEmpty()) {
+            throw new ParamNotFoundException("The continent can't be found or doesn't exist.");
+        }
+        return response.get();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public ContinentDTO findByIdDTO(String id) {
-        Optional<ContinentEntity> response = continentRepository.findById(id);
-
-        return response.map(entity -> continentMapper.entity2DTO(entity)).orElse(null);
-    }
-
-    @Override
-    public ContinentEntity findByIdEntity(String id) {
-        Optional<ContinentEntity> response = continentRepository.findById(id);
-
+    public ContinentEntity getEntityByName(String name) {
+        Optional<ContinentEntity> response = continentRepository.findByName(name);
         return response.orElse(null);
     }
-
-    @Override
-    public ContinentEntity findByName(ContinentDTO dto) {
-        Optional<ContinentEntity> request = continentRepository.findByName(dto.getDenomination());
-
-        return request.orElse(null);
-    }
-
-
 }

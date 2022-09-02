@@ -7,8 +7,6 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -29,18 +27,14 @@ public class CountryEntity implements Serializable {
 
     private String image;
 
-    @NotNull
-    @NotEmpty(message = "Must provide a name for the country.")
     private String denomination;
 
     private BigInteger population;
 
-    @NotNull(message = "Area can't be null.")
     private Double area;
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "continent_id")
-    @NotNull(message = "Must specify a continent.")
     private ContinentEntity continent;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE, CascadeType.DETACH})

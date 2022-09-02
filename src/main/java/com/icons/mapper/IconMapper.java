@@ -4,7 +4,6 @@ import com.icons.dto.CountryDTO;
 import com.icons.dto.IconDTO;
 import com.icons.entity.IconEntity;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -15,16 +14,11 @@ import java.util.List;
 @Component
 public class IconMapper {
 
-    private CountryMapper countryMapper;
+    private final CountryMapper countryMapper;
 
     @Autowired
-    @Lazy
-    public void setCountryMapper(CountryMapper countryMapper) {
+    public IconMapper(CountryMapper countryMapper) {
         this.countryMapper = countryMapper;
-    }
-
-    public CountryMapper getCountryMapper() {
-        return countryMapper;
     }
 
     public IconDTO entity2DTO(IconEntity entity, boolean loadCountries) {

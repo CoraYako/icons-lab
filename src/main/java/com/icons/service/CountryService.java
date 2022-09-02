@@ -18,11 +18,9 @@ public interface CountryService {
 
     List<CountryDTO> getByFilters(String name, String continent, List<String> icons, String order);
 
-    CountryDTO findByIdDTO(String id);
+    CountryEntity getEntityById(String id);
 
-    CountryEntity findByIdEntity(String id);
-
-    CountryEntity addContinent(String id, String idContinent);
+    CountryEntity getEntityByName(String name);
 
     CountryEntity addIcon(CountryEntity entity, IconEntity iconEntity);
 }

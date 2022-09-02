@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -17,7 +18,7 @@ public class CountryController {
     private CountryServiceImplement countryServiceImplement;
 
     @PostMapping("/save")
-    public ResponseEntity<CountryDTO> save(@RequestBody CountryDTO dto) {
+    public ResponseEntity<CountryDTO> save(@Valid @RequestBody CountryDTO dto) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(countryServiceImplement.save(dto));
@@ -28,6 +29,14 @@ public class CountryController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(countryServiceImplement.update(id, dto));
+    }
+
+    @PutMapping("/delete/{id}")
+    public ResponseEntity<Void> delete(@PathVariable String id) {
+        countryServiceImplement.delete(id);
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .build();
     }
 
     @GetMapping("/list")

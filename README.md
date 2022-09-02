@@ -1,2 +1,2 @@
 # icons-lab
-Geografic icons management apiREST
+Geographic icons management apiREST

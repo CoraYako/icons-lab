@@ -1,6 +1,5 @@
 package com.icons.repository;
 
-import com.icons.entity.ContinentEntity;
 import com.icons.entity.CountryEntity;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,8 +13,8 @@ import java.util.Optional;
 @Repository
 public interface CountryRepository extends JpaRepository<CountryEntity, String> {
 
-    @Query(value = "SELECT * FROM countries WHERE denomination LIKE :denomination", nativeQuery = true)
-    Optional<ContinentEntity> findByName(@Param("denomination") String denomination);
+    @Query(value = "SELECT * FROM countries WHERE denomination LIKE :denomination AND deleted = false", nativeQuery = true)
+    Optional<CountryEntity> findByName(@Param("denomination") String denomination);
 
     List<CountryEntity> findAll(Specification<CountryEntity> spec);
 }

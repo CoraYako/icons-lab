@@ -14,27 +14,13 @@ import java.util.List;
 @Component
 public class CountryMapper {
 
-    private IconMapper iconMapper;
-
-    private ContinentMapper continentMapper;
-
-    public ContinentMapper getContinentMapper() {
-        return continentMapper;
-    }
+    private final IconMapper iconMapper;
+    private final ContinentMapper continentMapper;
 
     @Autowired
-    public void setContinentMapper(ContinentMapper continentMapper) {
-        this.continentMapper = continentMapper;
-    }
-
-    public IconMapper getIconMapper() {
-        return iconMapper;
-    }
-
-    @Autowired
-    @Lazy
-    public void setIconMapper(IconMapper iconMapper) {
+    public CountryMapper(@Lazy IconMapper iconMapper, ContinentMapper continentMapper) {
         this.iconMapper = iconMapper;
+        this.continentMapper = continentMapper;
     }
 
     public CountryDTO entity2DTO(CountryEntity entity, boolean loadIcons) {
@@ -82,27 +68,10 @@ public class CountryMapper {
         dto.setDenomination(entity.getDenomination());
         dto.setPopulation(entity.getPopulation());
         dto.setArea(entity.getArea());
-        dto.setContinent(
-                continentMapper.entityBasic2DTOBasic(entity.getContinent())
-        );
+        dto.setContinent(continentMapper.entityBasic2DTOBasic(entity.getContinent()));
 
         return dto;
     }
-
-    /*public CountryEntity DTOBasic2EntityBasic(CountryDTO dto) {
-        CountryEntity entity = new CountryEntity();
-
-        entity.setId(dto.getId());
-        entity.setImage(dto.getImage());
-        dto.setDenomination(entity.getDenomination());
-        dto.setPopulation(entity.getPopulation());
-        dto.setArea(entity.getArea());
-        dto.setContinent(
-                continentMapper.entityBasic2DTOBasic(entity.getContinent())
-        );
-
-        return dto;
-    }*/
 
     public List<CountryDTO> entityList2DTOList(List<CountryEntity> entityList, boolean loadIcons) {
         List<CountryDTO> dtoList = new ArrayList<>();

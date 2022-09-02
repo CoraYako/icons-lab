@@ -14,7 +14,7 @@ import java.util.Optional;
 @Repository
 public interface IconRepository extends JpaRepository<IconEntity, String>, JpaSpecificationExecutor<IconEntity> {
 
-    @Query(value = "SELECT * FROM icons WHERE denomination LIKE :denomination", nativeQuery = true)
+    @Query(value = "SELECT * FROM icons WHERE denomination LIKE :denomination AND deleted = false", nativeQuery = true)
     Optional<IconEntity> findByName(@Param("denomination") String denomination);
 
     List<IconEntity> findAll(Specification<IconEntity> spec);
