@@ -11,7 +11,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("country")
+@RequestMapping("/api/country")
 public class CountryController {
 
     @Autowired
@@ -46,7 +46,7 @@ public class CountryController {
                 .body(countryServiceImplement.getAll());
     }
 
-    @GetMapping
+    @GetMapping("/search")
     public ResponseEntity<List<CountryDTO>> getByFilters(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String continent,

@@ -11,7 +11,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("continent")
+@RequestMapping("/api/continent")
 public class ContinentController {
 
     @Autowired
@@ -33,13 +33,5 @@ public class ContinentController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(continentServiceImplement.getAll());
-    }
-
-    @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<String> handleElementFoundException(Exception exception) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(exception.getMessage());
     }
 }

@@ -11,7 +11,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("icon")
+@RequestMapping("/api/icon")
 public class IconController {
 
     @Autowired
@@ -38,7 +38,7 @@ public class IconController {
                 .body(iconServiceImplement.getAll());
     }
 
-    @GetMapping
+    @GetMapping("/search")
     public ResponseEntity<List<IconDTO>> getByFilters(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String date,
