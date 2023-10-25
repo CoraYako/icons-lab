@@ -1,11 +1,13 @@
 package com.icons.auth.repository;
 
-import com.icons.auth.entity.UserEntity;
+import com.icons.auth.model.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-@Repository
+import java.util.Optional;
+
 public interface UserRepository extends JpaRepository<UserEntity, String> {
 
-    UserEntity findByUsername(String username);
+    boolean existsByEmail(String email);
+
+    Optional<UserEntity> findByEmail(String email);
 }
