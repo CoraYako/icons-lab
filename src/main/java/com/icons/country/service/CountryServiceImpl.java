@@ -8,6 +8,7 @@ import com.icons.country.model.dto.CountryResponseDTO;
 import com.icons.country.model.dto.CountryUpdateRequestDTO;
 import com.icons.country.model.mapper.CountryMapper;
 import com.icons.country.repository.CountryRepository;
+import com.icons.country.repository.SpecificationCountryFilter;
 import com.icons.icon.model.IconEntity;
 import com.icons.icon.service.IconService;
 import com.icons.util.ApiUtils;
@@ -22,6 +23,7 @@ import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Service
 @Validated
@@ -30,15 +32,16 @@ public class CountryServiceImpl implements CountryService {
     private final CountryRepository countryRepository;
     private final ContinentService continentService;
     private final IconService iconService;
+    private final SpecificationCountryFilter specificationCountryFilter;
 
-    public CountryServiceImpl(CountryMapper countryMapper,
-                              CountryRepository countryRepository,
-                              ContinentService continentService,
-                              @Lazy IconService iconService) {
+    public CountryServiceImpl(CountryMapper countryMapper, CountryRepository countryRepository,
+                              ContinentService continentService, @Lazy IconService iconService,
+                              SpecificationCountryFilter specificationCountryFilter) {
         this.countryMapper = countryMapper;
         this.countryRepository = countryRepository;
         this.continentService = continentService;
         this.iconService = iconService;
+        this.specificationCountryFilter = specificationCountryFilter;
     }
 
     @Override
@@ -84,10 +87,13 @@ public class CountryServiceImpl implements CountryService {
     }
 
     @Override
-    public Page<CountryResponseDTO> listCountries(int pageNumber) {
+    public Page<CountryResponseDTO> listCountries(int pageNumber, String name, String continentName,
+                                                  Set<String> iconsNames, String order) {
         Pageable pageable = PageRequest.of(pageNumber, ApiUtils.ELEMENTS_PER_PAGE);
         pageable.next().getPageNumber();
-        return countryRepository.findAll(pageable).map(countryMapper::toCompleteDTO);
+        return countryRepository
+                .findAll(specificationCountryFilter.getByFilters(name, continentName, iconsNames, order), pageable)
+                .map(countryMapper::toCompleteDTO);
     }
 
     @Override

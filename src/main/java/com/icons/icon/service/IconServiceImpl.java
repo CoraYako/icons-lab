@@ -8,6 +8,7 @@ import com.icons.icon.model.dto.IconResponseDTO;
 import com.icons.icon.model.dto.IconUpdateRequestDTO;
 import com.icons.icon.model.mapper.IconMapper;
 import com.icons.icon.repository.IconRepository;
+import com.icons.icon.repository.SpecificationIconFilter;
 import com.icons.util.ApiUtils;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
@@ -20,6 +21,7 @@ import org.springframework.validation.annotation.Validated;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Service
 @Validated
@@ -27,11 +29,14 @@ public class IconServiceImpl implements IconService {
     private final IconRepository iconRepository;
     private final IconMapper iconMapper;
     private final CountryService countryService;
+    private final SpecificationIconFilter specificationIconFilter;
 
-    public IconServiceImpl(IconRepository iconRepository, IconMapper iconMapper, CountryService countryService) {
+    public IconServiceImpl(IconRepository iconRepository, IconMapper iconMapper,
+                           CountryService countryService, SpecificationIconFilter specificationIconFilter) {
         this.iconRepository = iconRepository;
         this.iconMapper = iconMapper;
         this.countryService = countryService;
+        this.specificationIconFilter = specificationIconFilter;
     }
 
     @Override
@@ -114,9 +119,11 @@ public class IconServiceImpl implements IconService {
     }
 
     @Override
-    public Page<IconResponseDTO> listIcons(int pageNumber) {
+    public Page<IconResponseDTO> listIcons(int pageNumber, String name, String date,
+                                           String order, Set<String> countries) {
         Pageable pageable = PageRequest.of(pageNumber, ApiUtils.ELEMENTS_PER_PAGE);
         pageable.next().getPageNumber();
-        return iconRepository.findAll(pageable).map(iconMapper::toCompleteDTO);
+        return iconRepository.findAll(specificationIconFilter.getByFilters(name, date, countries, order), pageable)
+                .map(iconMapper::toCompleteDTO);
     }
 }

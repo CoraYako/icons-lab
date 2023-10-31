@@ -49,8 +49,16 @@ public class UserEntity implements UserDetails {
         return firstName;
     }
 
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
     public String getLastName() {
         return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     @Override
@@ -58,32 +66,20 @@ public class UserEntity implements UserDetails {
         return enabled;
     }
 
-    public Role getRole() {
-        return role;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
 
+    public Role getRole() {
+        return role;
+    }
+
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @Override
@@ -94,6 +90,10 @@ public class UserEntity implements UserDetails {
     @Override
     public String getPassword() {
         return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override

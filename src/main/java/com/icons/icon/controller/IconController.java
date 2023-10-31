@@ -1,8 +1,8 @@
 package com.icons.icon.controller;
 
 import com.icons.icon.model.dto.IconRequestDTO;
-import com.icons.icon.model.dto.IconUpdateRequestDTO;
 import com.icons.icon.model.dto.IconResponseDTO;
+import com.icons.icon.model.dto.IconUpdateRequestDTO;
 import com.icons.icon.service.IconService;
 import com.icons.util.ApiUtils;
 import jakarta.validation.Valid;
@@ -11,10 +11,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Set;
+
 @RestController
 @RequestMapping(ApiUtils.ICON_BASE_URL)
 public class IconController {
-
     private final IconService iconService;
 
     public IconController(IconService iconService) {
@@ -39,8 +40,14 @@ public class IconController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<IconResponseDTO>> listIcons(@RequestParam(name = "page") int pageNumber) {
-        return ResponseEntity.status(HttpStatus.OK).body(iconService.listIcons(pageNumber));
+    public ResponseEntity<Page<IconResponseDTO>> listIcons(
+            @RequestParam(name = "page") int pageNumber,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String date,
+            @RequestParam(required = false) Set<String> countries,
+            @RequestParam(required = false, defaultValue = "ASC") String order) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(iconService.listIcons(pageNumber, name, date, order, countries));
     }
 
     @DeleteMapping(ApiUtils.URI_RESOURCE)

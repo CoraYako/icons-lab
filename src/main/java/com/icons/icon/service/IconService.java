@@ -3,11 +3,13 @@ package com.icons.icon.service;
 import com.icons.country.model.CountryEntity;
 import com.icons.icon.model.IconEntity;
 import com.icons.icon.model.dto.IconRequestDTO;
-import com.icons.icon.model.dto.IconUpdateRequestDTO;
 import com.icons.icon.model.dto.IconResponseDTO;
+import com.icons.icon.model.dto.IconUpdateRequestDTO;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
+
+import java.util.Set;
 
 @Lazy
 public interface IconService {
@@ -24,5 +26,6 @@ public interface IconService {
 
     void deleteIcon(String id);
 
-    Page<IconResponseDTO> listIcons(int pageNumber);
+    Page<IconResponseDTO> listIcons(int pageNumber, String name, String date,
+                                    String order, Set<String> countries);
 }
