@@ -14,7 +14,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "COUNTIES")
 @SQLDelete(sql = "UPDATE COUNTRIES SET deleted=true WHERE id=?")
-@SQLRestriction("status <> 'DELETED'")
+@SQLRestriction("deleted <> false")
 public class CountryEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -27,7 +27,7 @@ public class CountryEntity implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "CONTINENT_ID")
     private ContinentEntity continent;
-    @ManyToMany(mappedBy = "COUNTRIES", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "COUNTRIES", fetch = FetchType.EAGER)
     private List<IconEntity> icons = new ArrayList<>();
 
     public CountryEntity(String imageURL, String name, long population, double area, ContinentEntity continent) {
