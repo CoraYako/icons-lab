@@ -4,7 +4,7 @@ import com.icons.continent.model.ContinentEntity;
 import com.icons.icon.model.IconEntity;
 import jakarta.persistence.*;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -12,36 +12,30 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "countries")
-@SQLDelete(sql = "UPDATE countries SET deleted = true WHERE id=?")
-@Where(clause = "deleted=false")
+@Table(name = "COUNTIES")
+@SQLDelete(sql = "UPDATE COUNTRIES SET deleted=true WHERE id=?")
+@SQLRestriction("status <> 'DELETED'")
 public class CountryEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
-    private String image;
+    private String imageURL;
     private String name;
     private long population;
     private double area;
     private boolean deleted = false;
-    @ManyToOne(
-            fetch = FetchType.EAGER,
-            cascade = CascadeType.MERGE
-    )
-    @JoinColumn(name = "continent_id")
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinColumn(name = "CONTINENT_ID")
     private ContinentEntity continent;
-    @ManyToMany(mappedBy = "countries", fetch = FetchType.EAGER)
-    private List<IconEntity> icons;
+    @ManyToMany(mappedBy = "COUNTRIES", fetch = FetchType.LAZY)
+    private List<IconEntity> icons = new ArrayList<>();
 
-    public CountryEntity(String id, String image, String name, long population, double area,
-                         ContinentEntity continent, List<IconEntity> icons) {
-        this.id = id;
-        this.image = image;
+    public CountryEntity(String imageURL, String name, long population, double area, ContinentEntity continent) {
+        this.imageURL = imageURL;
         this.name = name;
         this.population = population;
         this.area = area;
         this.continent = continent;
-        this.icons = icons;
     }
 
     public CountryEntity() {
@@ -51,13 +45,14 @@ public class CountryEntity implements Serializable {
         return id;
     }
 
-    public String getImage() {
-        return image;
+    public String getImageURL() {
+        return imageURL;
     }
 
-    public void setImage(String value) {
-        if (!Objects.isNull(value) && !value.trim().isEmpty())
-            this.image = value;
+    public void setImageURL(String value) {
+        if (Objects.isNull(value) || value.trim().isEmpty())
+            throw new IllegalArgumentException("The image URL cannot be empty or null");
+        this.imageURL = value;
     }
 
     public String getName() {
@@ -65,8 +60,9 @@ public class CountryEntity implements Serializable {
     }
 
     public void setName(String value) {
-        if (!Objects.isNull(value) && !value.trim().isEmpty())
-            this.name = value;
+        if (Objects.isNull(value) || value.trim().isEmpty())
+            throw new IllegalArgumentException("The country name cannot be empty or null");
+        this.name = value;
     }
 
     public long getPopulation() {
@@ -74,8 +70,9 @@ public class CountryEntity implements Serializable {
     }
 
     public void setPopulation(long value) {
-        if (value > 0)
-            this.population = value;
+        if (value < 1)
+            throw new IllegalArgumentException("The country's population cannot be less than 1");
+        this.population = value;
     }
 
     public double getArea() {
@@ -83,8 +80,9 @@ public class CountryEntity implements Serializable {
     }
 
     public void setArea(double value) {
-        if (value > 1)
-            this.area = value;
+        if (value < 1)
+            throw new IllegalArgumentException("The country's area cannot be less than 1");
+        this.area = value;
     }
 
     public ContinentEntity getContinent() {
@@ -92,22 +90,22 @@ public class CountryEntity implements Serializable {
     }
 
     public void setContinent(ContinentEntity continent) {
+        if (Objects.isNull(continent))
+            throw new IllegalArgumentException("The country's continent cannot be null");
         this.continent = continent;
     }
 
     public List<IconEntity> getIcons() {
-        return Objects.isNull(icons) ? icons = new ArrayList<>() : icons;
+        return icons;
     }
 
-    public void setIcons(List<IconEntity> icons) {
-        this.icons = icons;
+    public void appendIcon(IconEntity icon) {
+        if (Objects.isNull(icon))
+            throw new IllegalArgumentException("The country's icon cannot be null");
+        this.icons.add(icon);
     }
 
-    public Boolean getDeleted() {
+    public Boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(Boolean deleted) {
-        this.deleted = deleted;
     }
 }
