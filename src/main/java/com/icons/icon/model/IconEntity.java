@@ -3,7 +3,7 @@ package com.icons.icon.model;
 import com.icons.country.model.CountryEntity;
 import jakarta.persistence.*;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
@@ -15,42 +15,26 @@ import java.util.Objects;
 @Entity
 @Table(name = "icons")
 @SQLDelete(sql = "UPDATE icons SET deleted = true WHERE id=?")
-@Where(clause = "deleted=false")
+@SQLRestriction("deleted <> false")
 public class IconEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
-    private String image;
+    private String imageURL;
     private String name;
     private int height;
     private String historyDescription;
     private boolean deleted = false;
     @DateTimeFormat(pattern = "yyyy/MM/dd")
-    @Column(name = "creation_date")
-    private LocalDate creationDate;
+    @Column(name = "CREATED_AT")
+    private LocalDate createdAt;
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinTable(
-            name = "icons_countries",
-            joinColumns = @JoinColumn(name = "icon_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "country_id", referencedColumnName = "id")
+            name = "ICONS_COUNTRIES",
+            joinColumns = @JoinColumn(name = "ICON_ID", referencedColumnName = "ID"),
+            inverseJoinColumns = @JoinColumn(name = "COUNTRY_ID", referencedColumnName = "ID")
     )
-    private List<CountryEntity> countries;
-
-    public IconEntity(String id,
-                      String image,
-                      String name,
-                      int height,
-                      String historyDescription,
-                      LocalDate creationDate,
-                      List<CountryEntity> countries) {
-        this.id = id;
-        this.image = image;
-        this.name = name;
-        this.height = height;
-        this.historyDescription = historyDescription;
-        this.creationDate = creationDate;
-        this.countries = countries;
-    }
+    private List<CountryEntity> countries = new ArrayList<>();
 
     public IconEntity() {
     }
@@ -59,13 +43,14 @@ public class IconEntity implements Serializable {
         return id;
     }
 
-    public String getImage() {
-        return image;
+    public String getImageURL() {
+        return imageURL;
     }
 
-    public void setImage(String value) {
-        if (!Objects.isNull(value) && !value.trim().isEmpty())
-            this.image = value;
+    public void setImageURL(String value) {
+        if (Objects.isNull(value) || value.trim().isEmpty())
+            throw  new IllegalArgumentException("The icon image URL can't be empty");
+        this.imageURL = value;
     }
 
     public String getName() {
@@ -73,8 +58,9 @@ public class IconEntity implements Serializable {
     }
 
     public void setName(String value) {
-        if (!Objects.isNull(value) && !value.trim().isEmpty())
-            this.name = value;
+        if (Objects.isNull(value) || value.trim().isEmpty())
+            throw new  IllegalArgumentException("The icon name can't be empty");
+        this.name = value;
     }
 
     public int getHeight() {
@@ -82,8 +68,9 @@ public class IconEntity implements Serializable {
     }
 
     public void setHeight(int value) {
-        if (value > 0)
-            this.height = value;
+        if (value < 1)
+            throw  new  IllegalArgumentException("The icon's height can't be less than 1");
+        this.height = value;
     }
 
     public String getHistoryDescription() {
@@ -95,27 +82,21 @@ public class IconEntity implements Serializable {
             this.historyDescription = value;
     }
 
-    public boolean getDeleted() {
+    public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
     public LocalDate getCreationDate() {
-        return creationDate;
+        return createdAt;
     }
 
-    public void setCreationDate(LocalDate creationDate) {
-        this.creationDate = creationDate;
+    public void setCreationDate(LocalDate value) {
+        if (Objects.isNull(value))
+            throw  new  IllegalArgumentException("The icon creation date can't be empty");
+        this.createdAt = value;
     }
 
     public List<CountryEntity> getCountries() {
-        return Objects.isNull(countries) ? countries = new ArrayList<>() : countries;
-    }
-
-    public void setCountries(List<CountryEntity> countries) {
-        this.countries = countries;
+        return countries;
     }
 }
