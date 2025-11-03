@@ -3,7 +3,7 @@ package com.icons.icon.model.dto;
 import java.util.Set;
 
 public record IconUpdateRequestDTO(
-        String image,
+        String imageURL,
         String name,
         String creationDate,
         int height,
