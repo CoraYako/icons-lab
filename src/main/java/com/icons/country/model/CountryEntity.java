@@ -30,14 +30,6 @@ public class CountryEntity implements Serializable {
     @ManyToMany(mappedBy = "COUNTRIES", fetch = FetchType.EAGER)
     private List<IconEntity> icons = new ArrayList<>();
 
-    public CountryEntity(String imageURL, String name, long population, double area, ContinentEntity continent) {
-        this.imageURL = imageURL;
-        this.name = name;
-        this.population = population;
-        this.area = area;
-        this.continent = continent;
-    }
-
     public CountryEntity() {
     }
 
