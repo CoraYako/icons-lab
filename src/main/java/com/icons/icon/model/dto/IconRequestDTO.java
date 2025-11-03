@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 public record IconRequestDTO(
-        String image,
+        @NotEmpty @NotBlank String imageURL,
         @NotEmpty @NotBlank String name,
         @NotEmpty @NotBlank String creationDate,
         @NotNull @Min(value = 1) int height,

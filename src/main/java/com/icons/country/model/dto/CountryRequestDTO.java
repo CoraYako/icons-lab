@@ -6,10 +6,10 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 public record CountryRequestDTO(
-        String image,
+        @NotEmpty @NotBlank String imageURL,
         @NotEmpty @NotBlank String name,
-        @NotNull @Min(value = 0) long population,
-        @NotNull @Min(value = 2) double area,
+        @NotNull @Min(value = 1) long population,
+        @NotNull @Min(value = 1) double area,
         @NotEmpty @NotBlank String continentId
 ) {
 }

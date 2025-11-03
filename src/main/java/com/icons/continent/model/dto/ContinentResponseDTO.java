@@ -4,7 +4,7 @@ import com.icons.util.DataListResponseDTO;
 
 public record ContinentResponseDTO(
         String id,
-        String image,
+        String imageURL,
         String name,
         DataListResponseDTO countries
 ) {

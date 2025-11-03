@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 
 public record ContinentRequestDTO(
-        String image,
+        @NotEmpty @NotBlank String imageURL,
         @NotBlank @NotEmpty String name
 ) {
 }
