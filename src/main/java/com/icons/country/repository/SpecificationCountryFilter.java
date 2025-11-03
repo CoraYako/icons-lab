@@ -7,6 +7,7 @@ import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
+import org.jspecify.annotations.NonNull;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -18,8 +19,8 @@ import java.util.Set;
 
 @Component
 public class SpecificationCountryFilter {
-    public Specification<CountryEntity> getByFilters(String name, String continentName,
-                                                     Set<String> iconsNames, String order) {
+    public Specification<@NonNull CountryEntity> getByFilters(String name, String continentName,
+                                                              Set<String> iconsNames, String order) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             String value;
