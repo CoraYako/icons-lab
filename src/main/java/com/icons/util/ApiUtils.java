@@ -23,8 +23,4 @@ public class ApiUtils {
     public static boolean isNotValidUUID(String uuid) {
         return !UUID_REGEX_PATTERN.matcher(uuid).matches();
     }
-
-    public static boolean isASC(String order) {
-        return order.compareToIgnoreCase("ASC") == 0;
-    }
 }
