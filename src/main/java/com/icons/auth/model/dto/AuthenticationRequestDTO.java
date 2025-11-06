@@ -7,6 +7,5 @@ import jakarta.validation.constraints.NotEmpty;
 public record AuthenticationRequestDTO(
         @NotEmpty @NotBlank @Email String email,
         @NotEmpty @NotBlank String password
-
 ) {
 }

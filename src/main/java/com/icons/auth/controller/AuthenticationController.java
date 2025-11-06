@@ -5,6 +5,7 @@ import com.icons.auth.model.dto.AuthenticationResponseDTO;
 import com.icons.auth.model.dto.RegistrationRequestDTO;
 import com.icons.auth.service.AuthenticationService;
 import jakarta.validation.Valid;
+import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,13 +23,13 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Void> registration(@Valid @RequestBody RegistrationRequestDTO dto) {
+    public ResponseEntity<@NonNull Void> registration(@Valid @RequestBody RegistrationRequestDTO dto) {
         authenticationService.register(dto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponseDTO> login(@Valid @RequestBody AuthenticationRequestDTO dto) {
+    public ResponseEntity<@NonNull AuthenticationResponseDTO> login(@Valid @RequestBody AuthenticationRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.OK).body(authenticationService.authenticate(dto));
     }
 }
