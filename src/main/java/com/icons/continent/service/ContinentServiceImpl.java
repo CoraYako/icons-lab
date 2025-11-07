@@ -55,10 +55,11 @@ public class ContinentServiceImpl implements ContinentService {
 
         ContinentEntity continent = continentRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Continent not found for ID: %s", id)));
-        continent.setName(dto.name());
-        continent.setImageURL(dto.imageURL());
-        continent = continentRepository.save(continent);
-        return continentMapper.toDTO(continent);
+
+        var continentUpdated = applyUpdates(continent, dto);
+
+        continentUpdated = continentRepository.save(continentUpdated);
+        return continentMapper.toDTO(continentUpdated);
     }
 
     @Override
@@ -80,5 +81,15 @@ public class ContinentServiceImpl implements ContinentService {
         return continentRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException(String.format("Continent not found for ID: %s", id))
         );
+    }
+
+    private ContinentEntity applyUpdates(ContinentEntity continent, ContinentUpdateRequestDTO dto) {
+        if (dto.name() != null && !dto.name().trim().isEmpty())
+            continent.setName(dto.name());
+
+        if (dto.imageURL() != null && !dto.imageURL().trim().isEmpty())
+            continent.setImageURL(dto.imageURL());
+
+        return continent;
     }
 }
