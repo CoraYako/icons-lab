@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Table(name = "CONTINENTS")
@@ -31,8 +30,6 @@ public class ContinentEntity implements Serializable {
     }
 
     public void setImageURL(String value) {
-        if (Objects.isNull(value) || value.trim().isEmpty())
-            throw  new IllegalArgumentException("The image URL value cannot be null or empty");
         this.imageURL = value;
     }
 
@@ -41,8 +38,6 @@ public class ContinentEntity implements Serializable {
     }
 
     public void setName(String value) {
-        if (Objects.isNull(value) || value.trim().isEmpty())
-            throw   new IllegalArgumentException("The continent name value cannot be null or empty");
         this.name = value;
     }
 
