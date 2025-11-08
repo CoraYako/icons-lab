@@ -10,7 +10,6 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Table(name = "icons")
@@ -48,8 +47,6 @@ public class IconEntity implements Serializable {
     }
 
     public void setImageURL(String value) {
-        if (Objects.isNull(value) || value.trim().isEmpty())
-            throw  new IllegalArgumentException("The icon image URL can't be empty");
         this.imageURL = value;
     }
 
@@ -58,8 +55,6 @@ public class IconEntity implements Serializable {
     }
 
     public void setName(String value) {
-        if (Objects.isNull(value) || value.trim().isEmpty())
-            throw new  IllegalArgumentException("The icon name can't be empty");
         this.name = value;
     }
 
@@ -68,8 +63,6 @@ public class IconEntity implements Serializable {
     }
 
     public void setHeight(int value) {
-        if (value < 1)
-            throw  new  IllegalArgumentException("The icon's height can't be less than 1");
         this.height = value;
     }
 
@@ -78,12 +71,7 @@ public class IconEntity implements Serializable {
     }
 
     public void setHistoryDescription(String value) {
-        if (!Objects.isNull(value) && !value.trim().isEmpty())
-            this.historyDescription = value;
-    }
-
-    public boolean isDeleted() {
-        return deleted;
+        this.historyDescription = value;
     }
 
     public LocalDate getCreationDate() {
@@ -91,8 +79,6 @@ public class IconEntity implements Serializable {
     }
 
     public void setCreationDate(LocalDate value) {
-        if (Objects.isNull(value))
-            throw  new  IllegalArgumentException("The icon creation date can't be empty");
         this.createdAt = value;
     }
 

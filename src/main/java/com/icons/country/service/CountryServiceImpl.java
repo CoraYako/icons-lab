@@ -64,15 +64,9 @@ public class CountryServiceImpl implements CountryService {
 
         CountryEntity country = getById(id);
 
-        country.setImageURL(dto.imageURL());
-        country.setName(dto.name());
-        country.setPopulation(dto.population());
-        country.setArea(dto.area());
+        var countryUpdated = applyUpdates(country, dto);
 
-        if (!Objects.isNull(dto.continentId()) && !dto.continentId().trim().isEmpty())
-            country.setContinent(continentService.getById(dto.continentId()));
-
-        return countryMapper.toDTO(countryRepository.save(country));
+        return countryMapper.toDTO(countryRepository.save(countryUpdated));
     }
 
     @Override
@@ -107,5 +101,24 @@ public class CountryServiceImpl implements CountryService {
         return countryRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException(String.format("Country not found for ID: %s", id))
         );
+    }
+
+    private CountryEntity applyUpdates(CountryEntity country, CountryUpdateRequestDTO dto) {
+        if (Objects.nonNull(dto.imageURL()) && !dto.imageURL().trim().isEmpty())
+            country.setImageURL(dto.imageURL());
+
+        if (Objects.nonNull(dto.name()) && !dto.name().trim().isEmpty())
+            country.setName(dto.name());
+
+        if (dto.population() > 1)
+            country.setPopulation(dto.population());
+
+        if (dto.area() > 1)
+            country.setArea(dto.area());
+
+        if (Objects.nonNull(dto.continentId()) && !dto.continentId().trim().isEmpty())
+            country.setContinent(continentService.getById(dto.continentId()));
+
+        return country;
     }
 }

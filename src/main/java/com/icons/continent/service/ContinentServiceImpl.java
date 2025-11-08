@@ -65,7 +65,7 @@ public class ContinentServiceImpl implements ContinentService {
     @Override
     public Page<@NonNull ContinentResponseDTO> listContinents(int pageNumber) {
         Pageable pageable = PageRequest.of(pageNumber, ApiUtils.ELEMENTS_PER_PAGE);
-        pageable.next().getPageNumber();
+
         return continentRepository.findAll(pageable).map(continentMapper::toDTO);
     }
 

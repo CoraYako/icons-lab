@@ -9,7 +9,6 @@ import org.hibernate.annotations.SQLRestriction;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Table(name = "COUNTIES")
@@ -42,8 +41,6 @@ public class CountryEntity implements Serializable {
     }
 
     public void setImageURL(String value) {
-        if (Objects.isNull(value) || value.trim().isEmpty())
-            throw new IllegalArgumentException("The image URL cannot be empty or null");
         this.imageURL = value;
     }
 
@@ -52,8 +49,6 @@ public class CountryEntity implements Serializable {
     }
 
     public void setName(String value) {
-        if (Objects.isNull(value) || value.trim().isEmpty())
-            throw new IllegalArgumentException("The country name cannot be empty or null");
         this.name = value;
     }
 
@@ -62,8 +57,6 @@ public class CountryEntity implements Serializable {
     }
 
     public void setPopulation(long value) {
-        if (value < 1)
-            throw new IllegalArgumentException("The country's population cannot be less than 1");
         this.population = value;
     }
 
@@ -72,8 +65,6 @@ public class CountryEntity implements Serializable {
     }
 
     public void setArea(double value) {
-        if (value < 1)
-            throw new IllegalArgumentException("The country's area cannot be less than 1");
         this.area = value;
     }
 
@@ -82,22 +73,10 @@ public class CountryEntity implements Serializable {
     }
 
     public void setContinent(ContinentEntity continent) {
-        if (Objects.isNull(continent))
-            throw new IllegalArgumentException("The country's continent cannot be null");
         this.continent = continent;
     }
 
     public List<IconEntity> getIcons() {
         return icons;
-    }
-
-    public void appendIcon(IconEntity icon) {
-        if (Objects.isNull(icon))
-            throw new IllegalArgumentException("The country's icon cannot be null");
-        this.icons.add(icon);
-    }
-
-    public Boolean isDeleted() {
-        return deleted;
     }
 }

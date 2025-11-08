@@ -66,29 +66,9 @@ public class IconServiceImpl implements IconService {
                 () -> new EntityNotFoundException(String.format("Icon not found for ID %s", id))
         );
 
-        icon.setImageURL(dto.imageURL());
-        icon.setName(dto.name());
-        icon.setHeight(dto.height());
-        icon.setHistoryDescription(dto.historyDescription());
+        var iconUpdated = applyUpdates(icon, dto);
 
-        if (!Objects.isNull(dto.creationDate()) && !dto.creationDate().trim().isEmpty())
-            icon.setCreationDate(LocalDate.parse(dto.creationDate(), ApiUtils.OF_PATTERN));
-
-        if (!Objects.isNull(dto.countriesId()) && !dto.countriesId().isEmpty()) {
-            List<String> countriesId = icon.getCountries().stream().map(CountryEntity::getId).toList();
-            List<String> filteredCountriesId = dto.countriesId()
-                    .stream()
-                    .filter(countryId -> !countriesId.contains(countryId))
-                    .toList();
-            icon.getCountries().addAll(
-                    filteredCountriesId
-                            .stream()
-                            .map(countryService::getById)
-                            .toList()
-            );
-        }
-
-        return iconMapper.toDTO(iconRepository.save(icon));
+        return iconMapper.toDTO(iconRepository.save(iconUpdated));
     }
 
     @Override
@@ -114,5 +94,38 @@ public class IconServiceImpl implements IconService {
         Pageable pageable = PageRequest.of(filters.pageNumber(), ApiUtils.ELEMENTS_PER_PAGE);
 
         return iconRepository.findAll(specificationIconFilter.getByFilters(filters), pageable).map(iconMapper::toDTO);
+    }
+
+    private IconEntity applyUpdates(IconEntity iconEntity, IconUpdateRequestDTO dto) {
+        if (Objects.nonNull(dto.imageURL()) && !dto.imageURL().trim().isEmpty())
+            iconEntity.setImageURL(dto.imageURL());
+
+        if (Objects.nonNull(dto.name()) && !dto.name().trim().isEmpty())
+            iconEntity.setName(dto.name());
+
+        if (dto.height() > 1)
+            iconEntity.setHeight(dto.height());
+
+        if (Objects.nonNull(dto.historyDescription()) && !dto.historyDescription().trim().isEmpty())
+            iconEntity.setHistoryDescription(dto.historyDescription());
+
+        if (!Objects.isNull(dto.creationDate()) && !dto.creationDate().trim().isEmpty())
+            iconEntity.setCreationDate(LocalDate.parse(dto.creationDate(), ApiUtils.OF_PATTERN));
+
+        if (!Objects.isNull(dto.countriesId()) && !dto.countriesId().isEmpty()) {
+            List<String> countriesId = iconEntity.getCountries().stream().map(CountryEntity::getId).toList();
+            List<String> filteredCountriesId = dto.countriesId()
+                    .stream()
+                    .filter(countryId -> !countriesId.contains(countryId))
+                    .toList();
+            iconEntity.getCountries().addAll(
+                    filteredCountriesId
+                            .stream()
+                            .map(countryService::getById)
+                            .toList()
+            );
+        }
+
+        return iconEntity;
     }
 }
