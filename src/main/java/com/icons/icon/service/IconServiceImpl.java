@@ -2,6 +2,7 @@ package com.icons.icon.service;
 
 import com.icons.country.model.CountryEntity;
 import com.icons.country.service.CountryService;
+import com.icons.exception.*;
 import com.icons.icon.model.IconEntity;
 import com.icons.icon.model.dto.IconFilterRequestDTO;
 import com.icons.icon.model.dto.IconRequestDTO;
@@ -11,8 +12,6 @@ import com.icons.icon.model.mapper.IconMapper;
 import com.icons.icon.repository.IconRepository;
 import com.icons.icon.repository.SpecificationIconFilter;
 import com.icons.util.ApiUtils;
-import jakarta.persistence.EntityExistsException;
-import jakarta.persistence.EntityNotFoundException;
 import org.jspecify.annotations.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -43,11 +42,11 @@ public class IconServiceImpl implements IconService {
     @Override
     public void createIcon(IconRequestDTO dto) {
         if (Objects.isNull(dto))
-            throw new IllegalArgumentException("The provided Geographical Icon is invalid or null.");
+            throw new NullRequestBodyException("Geographic Icon");
         if (Objects.isNull(dto.name()) || dto.name().trim().isEmpty())
-            throw new IllegalArgumentException("The provided Icon name is invalid or null.");
+            throw new InvalidFieldException("name", "Must provide an icon name");
         if (iconRepository.existsByName(dto.name()))
-            throw new EntityExistsException(String.format("An Icon is already created for name %s.", dto.name()));
+            throw new DuplicatedResourceException("Icon", dto.name());
 
         IconEntity icon = iconMapper.toEntity(dto);
         CountryEntity country = countryService.getById(dto.countryId());
@@ -58,13 +57,12 @@ public class IconServiceImpl implements IconService {
     @Override
     public IconResponseDTO updateIcon(String id, IconUpdateRequestDTO dto) {
         if (ApiUtils.isNotValidUUID(id))
-            throw new IllegalArgumentException("The provided ID value doesn't represents a valid ID.");
+            throw new InvalidUUIDException(id);
         if (Objects.isNull(dto))
-            throw new IllegalArgumentException("The provided Icon is invalid or null.");
+            throw new NullRequestBodyException("Geographic Icon");
 
-        IconEntity icon = iconRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException(String.format("Icon not found for ID %s", id))
-        );
+        IconEntity icon = iconRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Icon", id));
 
         var iconUpdated = applyUpdates(icon, dto);
 
@@ -74,18 +72,17 @@ public class IconServiceImpl implements IconService {
     @Override
     public IconResponseDTO getIconById(String id) {
         if (ApiUtils.isNotValidUUID(id))
-            throw new IllegalArgumentException("The provided ID value doesn't represents a valid ID.");
+            throw new InvalidUUIDException(id);
         return iconRepository.findById(id)
                 .map(iconMapper::toDTO)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Icon not found for ID %s", id)));
+                .orElseThrow(() -> new ResourceNotFoundException("Icon", id));
     }
 
     @Override
     public void deleteIcon(String id) {
         if (ApiUtils.isNotValidUUID(id))
-            throw new IllegalArgumentException("The provided ID value doesn't represents a valid ID.");
-        IconEntity icon = iconRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Icon not found for ID %s", id)));
+            throw new InvalidUUIDException(id);
+        IconEntity icon = iconRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Icon", id));
         iconRepository.delete(icon);
     }
 

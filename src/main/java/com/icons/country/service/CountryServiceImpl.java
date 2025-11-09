@@ -10,9 +10,8 @@ import com.icons.country.model.dto.CountryUpdateRequestDTO;
 import com.icons.country.model.mapper.CountryMapper;
 import com.icons.country.repository.CountryRepository;
 import com.icons.country.repository.SpecificationCountryFilter;
+import com.icons.exception.*;
 import com.icons.util.ApiUtils;
-import jakarta.persistence.EntityExistsException;
-import jakarta.persistence.EntityNotFoundException;
 import org.jspecify.annotations.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -41,11 +40,11 @@ public class CountryServiceImpl implements CountryService {
     @Override
     public void createCountry(CountryRequestDTO dto) {
         if (Objects.isNull(dto))
-            throw new IllegalArgumentException("The provided Country is null or invalid.");
+            throw new NullRequestBodyException("Country");
         if (Objects.isNull(dto.name()) || dto.name().trim().isEmpty())
-            throw new IllegalArgumentException("The provided Country name is invalid.");
+            throw new InvalidFieldException("name", "Must provide a country name");
         if (countryRepository.existsByName(dto.name()))
-            throw new EntityExistsException("A Country with this name already exists.");
+            throw new DuplicatedResourceException("Country", dto.name());
 
         CountryEntity country = countryMapper.toEntity(dto);
         ContinentEntity continent = continentService.getById(dto.continentId());
@@ -56,11 +55,11 @@ public class CountryServiceImpl implements CountryService {
     @Override
     public CountryResponseDTO updateCountry(String id, CountryUpdateRequestDTO dto) {
         if (ApiUtils.isNotValidUUID(id))
-            throw new IllegalArgumentException("The provided ID value doesn't represents a valid ID.");
+            throw new InvalidUUIDException(id);
         if (Objects.isNull(dto))
-            throw new IllegalArgumentException("The current Country is invalid or null.");
+            throw new NullRequestBodyException("Country");
         if (countryRepository.existsByName(dto.name()))
-            throw new IllegalArgumentException("A Country with this name already exists.");
+            throw new DuplicatedResourceException("Country", dto.name());
 
         CountryEntity country = getById(id);
 
@@ -79,11 +78,10 @@ public class CountryServiceImpl implements CountryService {
     @Override
     public void deleteCountry(String id) {
         if (ApiUtils.isNotValidUUID(id))
-            throw new IllegalArgumentException("The provided ID value doesn't represents a valid ID.");
+            throw new InvalidUUIDException(id);
 
-        CountryEntity country = countryRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException(String.format("Country not found for ID: %s", id))
-        );
+        CountryEntity country = countryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Country", id));
 
         countryRepository.delete(country);
     }
@@ -96,11 +94,10 @@ public class CountryServiceImpl implements CountryService {
     @Override
     public CountryEntity getById(String id) {
         if (ApiUtils.isNotValidUUID(id))
-            throw new IllegalArgumentException("The provided ID value doesn't represents a valid ID.");
+            throw new InvalidUUIDException(id);
 
-        return countryRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException(String.format("Country not found for ID: %s", id))
-        );
+        return countryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Country", id));
     }
 
     private CountryEntity applyUpdates(CountryEntity country, CountryUpdateRequestDTO dto) {

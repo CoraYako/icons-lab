@@ -6,9 +6,8 @@ import com.icons.continent.model.dto.ContinentResponseDTO;
 import com.icons.continent.model.dto.ContinentUpdateRequestDTO;
 import com.icons.continent.model.mapper.ContinentMapper;
 import com.icons.continent.repository.ContinentRepository;
+import com.icons.exception.*;
 import com.icons.util.ApiUtils;
-import jakarta.persistence.EntityExistsException;
-import jakarta.persistence.EntityNotFoundException;
 import org.jspecify.annotations.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,7 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import java.security.InvalidParameterException;
 import java.util.Objects;
 
 @Service
@@ -33,11 +31,11 @@ public class ContinentServiceImpl implements ContinentService {
     @Override
     public void createContinent(ContinentRequestDTO dto) {
         if (Objects.isNull(dto))
-            throw new NullPointerException("The provided Continent is null or invalid.");
+            throw new NullRequestBodyException("Continent");
         if (Objects.isNull(dto.name()) || dto.name().trim().isEmpty())
-            throw new InvalidParameterException("Must provide a valid Country name.");
+            throw new InvalidFieldException("name", "Must provide a continent name");
         if (continentRepository.existsByName(dto.name().trim()))
-            throw new EntityExistsException("A Continent with the same name already exists.");
+            throw new DuplicatedResourceException("Continent", dto.name());
 
         ContinentEntity continent = continentMapper.toEntity(dto);
         continentRepository.save(continent);
@@ -46,15 +44,14 @@ public class ContinentServiceImpl implements ContinentService {
     @Override
     public ContinentResponseDTO updateContinent(String id, ContinentUpdateRequestDTO dto) {
         if (Objects.isNull(dto))
-            throw new NullPointerException("The current Continent is null or invalid. Can't be updated.");
+            throw new NullRequestBodyException("Continent");
         if (ApiUtils.isNotValidUUID(id))
-            throw new IllegalArgumentException("The provided ID value doesn't represents a valid ID.");
+            throw new InvalidUUIDException(id);
         if (continentRepository.existsByName(dto.name()))
-            throw new IllegalArgumentException(
-                    String.format("There is already a Continent with the provided name %s", dto.name()));
+            throw new DuplicatedResourceException("Continent", dto.name());
 
         ContinentEntity continent = continentRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Continent not found for ID: %s", id)));
+                .orElseThrow(() -> new ResourceNotFoundException("Continent", id));
 
         var continentUpdated = applyUpdates(continent, dto);
 
@@ -77,10 +74,9 @@ public class ContinentServiceImpl implements ContinentService {
     @Override
     public ContinentEntity getById(String id) {
         if (ApiUtils.isNotValidUUID(id))
-            throw new IllegalArgumentException("The provided ID value doesn't represents a valid UUID.");
-        return continentRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException(String.format("Continent not found for ID: %s", id))
-        );
+            throw new InvalidUUIDException(id);
+        return continentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Continent", id));
     }
 
     private ContinentEntity applyUpdates(ContinentEntity continent, ContinentUpdateRequestDTO dto) {

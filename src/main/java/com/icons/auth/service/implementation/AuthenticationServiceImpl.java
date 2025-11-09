@@ -8,15 +8,16 @@ import com.icons.auth.model.mapper.UserMapper;
 import com.icons.auth.repository.UserRepository;
 import com.icons.auth.service.AuthenticationService;
 import com.icons.auth.service.JwtService;
-import jakarta.persistence.EntityExistsException;
-import jakarta.persistence.EntityNotFoundException;
+import com.icons.exception.DuplicatedResourceException;
+import com.icons.exception.InvalidFieldException;
+import com.icons.exception.NullRequestBodyException;
+import com.icons.exception.ResourceNotFoundException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import java.security.InvalidParameterException;
 import java.util.Objects;
 
 @Service
@@ -43,11 +44,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public void register(RegistrationRequestDTO requestDTO) {
         if (Objects.isNull(requestDTO))
-            throw new NullPointerException("The provided user is invalid or null.");
+            throw new NullRequestBodyException("User");
         if (Objects.isNull(requestDTO.email()) || requestDTO.email().trim().isEmpty())
-            throw new InvalidParameterException("Must provide a valid email.");
+            throw new InvalidFieldException("email", "Must provide a valid email");
         if (userRepository.existsByEmail(requestDTO.email()))
-            throw new EntityExistsException(String.format("The email %s is already taken.", requestDTO.email()));
+            throw new DuplicatedResourceException("User", requestDTO.email());
         UserEntity user = userMapper.toEntity(requestDTO);
         String passwordEncrypted = passwordEncoder.encode(user.getPassword());
         user.setPassword(passwordEncrypted);
@@ -59,8 +60,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(requestDTO.email(),
                 requestDTO.password()));
         var user = userRepository.findByEmail(requestDTO.email())
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("User not found for email %s", requestDTO.email())));
+                .orElseThrow(() -> new ResourceNotFoundException("User", requestDTO.email()));
         return new AuthenticationResponseDTO(jwtService.generateToken(user));
     }
 }
