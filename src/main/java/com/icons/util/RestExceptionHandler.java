@@ -1,9 +1,8 @@
 package com.icons.util;
 
+import com.icons.exception.*;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.security.SignatureException;
-import jakarta.persistence.EntityExistsException;
-import jakarta.persistence.EntityNotFoundException;
 import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,22 +18,28 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.security.InvalidParameterException;
 import java.time.LocalDateTime;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RestControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
+
+    private ResponseEntity<@NonNull Object> buildResponse(HttpStatus status, String message, WebRequest request) {
+        ApiError apiError = new ApiError(
+                LocalDateTime.now(),
+                status,
+                message,
+                request.getDescription(false));
+        return ResponseEntity.status(status).body(apiError);
+    }
+
     @Override
     protected ResponseEntity<@NonNull Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
                                                                            @NonNull HttpHeaders headers,
                                                                            @NonNull HttpStatusCode status,
-                                                                           WebRequest request) {
-        ApiError apiError = new ApiError(LocalDateTime.now(), HttpStatus.resolve(status.value()),
-                ex.getMessage(),
-                request.getDescription(false));
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiError);
+                                                                           @NonNull WebRequest request) {
+        return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
     }
 
     @Override
@@ -42,7 +47,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                                                                            @NonNull HttpHeaders headers,
                                                                            @NonNull HttpStatusCode status,
                                                                            @NonNull WebRequest request) {
-        Map<String, String> errors = new HashMap<>();
+        Map<String, String> errors = new LinkedHashMap<>();
         ex.getBindingResult()
                 .getAllErrors()
                 .forEach(error -> {
@@ -53,78 +58,32 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
     }
 
-    @ExceptionHandler(value = JwtException.class)
-    protected ResponseEntity<@NonNull Object> handleExpiredJwt(JwtException ex,
-                                                               @NonNull HttpHeaders headers,
-                                                               @NonNull HttpStatusCode status,
-                                                               @NonNull WebRequest request) {
-        ApiError apiError = new ApiError(LocalDateTime.now(),
-                HttpStatus.UNAUTHORIZED,
-                ex.getMessage(),
-                request.getDescription(false));
-        return ResponseEntity.status(apiError.status()).body(apiError);
+    @ExceptionHandler(value = {JwtException.class, BadCredentialsException.class})
+    protected ResponseEntity<@NonNull Object> handleExpiredJwt(RuntimeException ex, @NonNull WebRequest request) {
+        return buildResponse(HttpStatus.UNAUTHORIZED, ex.getMessage(), request);
     }
 
-    @ExceptionHandler(value = SignatureException.class)
-    protected ResponseEntity<@NonNull Object> handleSignature(SignatureException ex, WebRequest request) {
-        ApiError apiError = new ApiError(LocalDateTime.now(),
-                HttpStatus.FORBIDDEN,
-                ex.getMessage(),
-                request.getDescription(false));
-        return ResponseEntity.status(apiError.status()).body(apiError);
+    @ExceptionHandler(value = {DisabledException.class, SignatureException.class})
+    protected ResponseEntity<@NonNull Object> handleDisabled(RuntimeException ex, WebRequest request) {
+        return buildResponse(HttpStatus.FORBIDDEN, ex.getMessage(), request);
     }
 
-    @ExceptionHandler(value = DisabledException.class)
-    protected ResponseEntity<@NonNull Object> handleDisabled(DisabledException ex, WebRequest request) {
-        ApiError apiError = new ApiError(LocalDateTime.now(),
-                HttpStatus.FORBIDDEN,
-                ex.getMessage(),
-                request.getDescription(false));
-        return ResponseEntity.status(apiError.status()).body(apiError);
+    @ExceptionHandler(value = ResourceNotFoundException.class)
+    protected ResponseEntity<@NonNull Object> handleEntityNotFound(ResourceNotFoundException ex, WebRequest request) {
+        return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage(), request);
     }
 
-    @ExceptionHandler(value = BadCredentialsException.class)
-    protected ResponseEntity<@NonNull Object> handleBadCredentials(BadCredentialsException ex, WebRequest request) {
-        ApiError apiError = new ApiError(LocalDateTime.now(),
-                HttpStatus.UNAUTHORIZED,
-                ex.getMessage(),
-                request.getDescription(false));
-        return ResponseEntity.status(apiError.status()).body(apiError);
+    @ExceptionHandler(value = DuplicatedResourceException.class)
+    protected ResponseEntity<@NonNull Object> handleEntityExists(DuplicatedResourceException ex, WebRequest request) {
+        return buildResponse(HttpStatus.CONFLICT, ex.getMessage(), request);
     }
 
-    @ExceptionHandler(value = NullPointerException.class)
-    protected ResponseEntity<@NonNull Object> handleNullPointer(NullPointerException ex, WebRequest request) {
-        ApiError apiError = new ApiError(LocalDateTime.now(),
-                HttpStatus.BAD_REQUEST,
-                ex.getMessage(),
-                request.getDescription(false));
-        return ResponseEntity.status(apiError.status()).body(apiError);
-    }
-
-    @ExceptionHandler(value = EntityNotFoundException.class)
-    protected ResponseEntity<@NonNull Object> handleEntityNotFound(EntityNotFoundException ex, WebRequest request) {
-        ApiError apiError = new ApiError(LocalDateTime.now(),
-                HttpStatus.NOT_FOUND,
-                ex.getMessage(),
-                request.getDescription(false));
-        return ResponseEntity.status(apiError.status()).body(apiError);
-    }
-
-    @ExceptionHandler(value = EntityExistsException.class)
-    protected ResponseEntity<@NonNull Object> handleEntityExists(EntityExistsException ex, WebRequest request) {
-        ApiError apiError = new ApiError(LocalDateTime.now(),
-                HttpStatus.BAD_REQUEST,
-                ex.getMessage(),
-                request.getDescription(false));
-        return ResponseEntity.status(apiError.status()).body(apiError);
-    }
-
-    @ExceptionHandler(value = InvalidParameterException.class)
-    protected ResponseEntity<@NonNull Object> handleInvalidParameter(InvalidParameterException ex, WebRequest request) {
-        ApiError apiError = new ApiError(LocalDateTime.now(),
-                HttpStatus.BAD_REQUEST,
-                ex.getMessage(),
-                request.getDescription(false));
-        return ResponseEntity.status(apiError.status()).body(apiError);
+    @ExceptionHandler(value = {
+            NullRequestBodyException.class,
+            InvalidFieldException.class,
+            InvalidUUIDException.class
+    })
+    protected ResponseEntity<@NonNull Object> handleEntityExists(BusinessValidationException ex, WebRequest request) {
+        return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
     }
 }
