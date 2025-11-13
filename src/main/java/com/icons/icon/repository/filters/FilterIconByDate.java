@@ -13,13 +13,17 @@ import org.springframework.util.StringUtils;
 import java.time.LocalDate;
 
 @Component
-public class DateFilterStrategy implements IconFilterStrategy {
+public class FilterIconByDate implements IconFilterStrategy {
     @Override
-    public Predicate apply(IconFilterRequestDTO filters, Root<IconEntity> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-        if (StringUtils.hasLength(filters.date())) {
-            LocalDate localDate = LocalDate.parse(filters.date(), ApiUtils.OF_PATTERN);
-            return criteriaBuilder.equal(root.get("creationDate"), localDate);
+    public Predicate apply(IconFilterRequestDTO filters,
+                           Root<IconEntity> root,
+                           CriteriaQuery<?> query,
+                           CriteriaBuilder criteriaBuilder) {
+        if (!StringUtils.hasLength(filters.date())) {
+            return null;
         }
-        return null;
+
+        LocalDate localDate = LocalDate.parse(filters.date(), ApiUtils.OF_PATTERN);
+        return criteriaBuilder.equal(root.get("creationDate"), localDate);
     }
 }
