@@ -1,4 +1,4 @@
-package com.icons;
+package com.icons.shared;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;

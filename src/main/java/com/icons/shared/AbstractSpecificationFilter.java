@@ -1,4 +1,4 @@
-package com.icons;
+package com.icons.shared;
 
 import jakarta.persistence.criteria.Predicate;
 import org.jspecify.annotations.NonNull;

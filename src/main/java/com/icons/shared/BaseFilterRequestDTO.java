@@ -1,4 +1,4 @@
-package com.icons;
+package com.icons.shared;
 
 public interface BaseFilterRequestDTO {
     String orderByField();
