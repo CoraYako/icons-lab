@@ -1,6 +1,6 @@
 package com.icons.country.repository;
 
-import com.icons.AbstractSpecificationFilter;
+import com.icons.shared.AbstractSpecificationFilter;
 import com.icons.country.model.CountryEntity;
 import com.icons.country.model.dto.CountryFilterRequestDTO;
 import com.icons.country.repository.filters.CountryFilterStrategy;

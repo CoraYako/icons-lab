@@ -1,6 +1,6 @@
 package com.icons.icon.repository;
 
-import com.icons.AbstractSpecificationFilter;
+import com.icons.shared.AbstractSpecificationFilter;
 import com.icons.icon.model.IconEntity;
 import com.icons.icon.model.dto.IconFilterRequestDTO;
 import com.icons.icon.repository.filters.IconFilterStrategy;

@@ -1,6 +1,6 @@
 package com.icons.icon.model.dto;
 
-import com.icons.BaseFilterRequestDTO;
+import com.icons.shared.BaseFilterRequestDTO;
 
 import java.util.Set;
 

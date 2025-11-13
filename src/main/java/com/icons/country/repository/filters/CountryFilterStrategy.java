@@ -1,6 +1,6 @@
 package com.icons.country.repository.filters;
 
-import com.icons.FilterStrategy;
+import com.icons.shared.FilterStrategy;
 import com.icons.country.model.CountryEntity;
 import com.icons.country.model.dto.CountryFilterRequestDTO;
 
