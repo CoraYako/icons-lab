@@ -16,9 +16,15 @@ public class ContinentEntity implements Serializable {
     private String imageURL;
     private String name;
     @OneToMany(mappedBy = "continent", fetch = FetchType.LAZY)
-    private List<CountryEntity> countries = new ArrayList<>();
+    private final List<CountryEntity> countries = new ArrayList<>();
 
     public ContinentEntity() {
+    }
+
+    public ContinentEntity(String id, String imageURL, String name) {
+        this.id = id;
+        this.imageURL = imageURL;
+        this.name = name;
     }
 
     public String getId() {
