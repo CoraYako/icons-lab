@@ -12,6 +12,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping(ApiUtils.ICON_BASE_URL)
@@ -23,9 +26,14 @@ public class IconController {
     }
 
     @PostMapping()
-    public ResponseEntity<@NonNull Void> createIcon(@Valid @RequestBody IconRequestDTO dto) {
-        iconService.createIcon(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<@NonNull IconResponseDTO> createIcon(@Valid @RequestBody IconRequestDTO dto) {
+        var icon = iconService.createIcon(dto);
+
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path(ApiUtils.URI_RESOURCE)
+                .buildAndExpand(icon.id())
+                .toUri();
+        return ResponseEntity.created(location).body(icon);
     }
 
     @PatchMapping(ApiUtils.URI_RESOURCE)

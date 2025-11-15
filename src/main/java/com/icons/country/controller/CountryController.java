@@ -12,6 +12,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping(ApiUtils.COUNTRY_BASE_URL)
@@ -24,9 +27,14 @@ public class CountryController {
     }
 
     @PostMapping()
-    public ResponseEntity<@NonNull Void> createCountry(@Valid @RequestBody CountryRequestDTO dto) {
-        countryService.createCountry(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<@NonNull CountryResponseDTO> createCountry(@Valid @RequestBody CountryRequestDTO dto) {
+        var country = countryService.createCountry(dto);
+
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path(ApiUtils.URI_RESOURCE)
+                .buildAndExpand(country.id())
+                .toUri();
+        return ResponseEntity.created(location).body(country);
     }
 
     @PatchMapping(ApiUtils.URI_RESOURCE)
