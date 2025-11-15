@@ -10,7 +10,7 @@ import org.springframework.data.domain.Page;
 
 public interface IconService {
 
-    void createIcon(@NotNull IconRequestDTO dto);
+    IconResponseDTO createIcon(@NotNull IconRequestDTO dto);
 
     IconResponseDTO updateIcon(@NotNull String id, @NotNull IconUpdateRequestDTO dto);
 

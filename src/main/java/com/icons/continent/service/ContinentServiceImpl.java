@@ -29,7 +29,7 @@ public class ContinentServiceImpl implements ContinentService {
     }
 
     @Override
-    public void createContinent(ContinentRequestDTO dto) {
+    public ContinentResponseDTO createContinent(ContinentRequestDTO dto) {
         if (Objects.isNull(dto))
             throw new NullRequestBodyException("Continent");
         if (Objects.isNull(dto.name()) || dto.name().trim().isEmpty())
@@ -38,7 +38,9 @@ public class ContinentServiceImpl implements ContinentService {
             throw new DuplicatedResourceException("Continent", dto.name());
 
         ContinentEntity continent = continentMapper.toEntity(dto);
-        continentRepository.save(continent);
+        continent = continentRepository.save(continent);
+
+        return continentMapper.toDTO(continent);
     }
 
     @Override

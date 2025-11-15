@@ -10,7 +10,7 @@ import org.springframework.data.domain.Page;
 
 public interface ContinentService {
 
-    void createContinent(@NotNull ContinentRequestDTO dto);
+    ContinentResponseDTO createContinent(@NotNull ContinentRequestDTO dto);
 
     ContinentResponseDTO updateContinent(@NotNull String id, @NotNull ContinentUpdateRequestDTO dto);
 

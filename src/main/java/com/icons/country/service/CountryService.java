@@ -11,7 +11,7 @@ import org.springframework.data.domain.Page;
 
 public interface CountryService {
 
-    void createCountry(@NotNull CountryRequestDTO dto);
+    CountryResponseDTO createCountry(@NotNull CountryRequestDTO dto);
 
     CountryResponseDTO updateCountry(@NotNull String id, @NotNull CountryUpdateRequestDTO dto);
 

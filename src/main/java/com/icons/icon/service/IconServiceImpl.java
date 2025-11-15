@@ -40,7 +40,7 @@ public class IconServiceImpl implements IconService {
     }
 
     @Override
-    public void createIcon(IconRequestDTO dto) {
+    public IconResponseDTO createIcon(IconRequestDTO dto) {
         if (Objects.isNull(dto))
             throw new NullRequestBodyException("Geographic Icon");
         if (Objects.isNull(dto.name()) || dto.name().trim().isEmpty())
@@ -51,7 +51,9 @@ public class IconServiceImpl implements IconService {
         IconEntity icon = iconMapper.toEntity(dto);
         CountryEntity country = countryService.getById(dto.countryId());
         icon.getCountries().add(country);
-        iconRepository.save(icon);
+        icon = iconRepository.save(icon);
+
+        return iconMapper.toDTO(icon);
     }
 
     @Override

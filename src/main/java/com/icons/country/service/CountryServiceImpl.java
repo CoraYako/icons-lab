@@ -38,7 +38,7 @@ public class CountryServiceImpl implements CountryService {
     }
 
     @Override
-    public void createCountry(CountryRequestDTO dto) {
+    public CountryResponseDTO createCountry(CountryRequestDTO dto) {
         if (Objects.isNull(dto))
             throw new NullRequestBodyException("Country");
         if (Objects.isNull(dto.name()) || dto.name().trim().isEmpty())
@@ -49,7 +49,9 @@ public class CountryServiceImpl implements CountryService {
         CountryEntity country = countryMapper.toEntity(dto);
         ContinentEntity continent = continentService.getById(dto.continentId());
         country.setContinent(continent);
-        countryRepository.save(country);
+        country = countryRepository.save(country);
+
+        return countryMapper.toDTO(country);
     }
 
     @Override
