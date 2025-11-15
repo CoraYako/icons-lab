@@ -4,9 +4,13 @@ import com.icons.country.model.CountryEntity;
 import com.icons.country.model.dto.CountryRequestDTO;
 import com.icons.country.model.dto.CountryResponseDTO;
 import com.icons.icon.model.IconEntity;
-import com.icons.util.DataListResponseDTO;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
+
+import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 @Validated
@@ -27,6 +31,10 @@ public class CountryMapperImpl implements CountryMapper {
 
     @Override
     public CountryResponseDTO toDTO(CountryEntity entity) {
+        Set<String> icons = CollectionUtils.isEmpty(entity.getIcons()) ?
+                Collections.emptySet() :
+                entity.getIcons().stream().map(IconEntity::getName).collect(Collectors.toSet());
+
         return new CountryResponseDTO(
                 entity.getId(),
                 entity.getImageURL(),
@@ -34,7 +42,7 @@ public class CountryMapperImpl implements CountryMapper {
                 entity.getPopulation(),
                 entity.getArea(),
                 entity.getContinent().getName(),
-                new DataListResponseDTO(entity.getIcons().stream().map(IconEntity::getName).toList())
+                icons
         );
     }
 }

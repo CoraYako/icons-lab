@@ -5,11 +5,14 @@ import com.icons.icon.model.IconEntity;
 import com.icons.icon.model.dto.IconRequestDTO;
 import com.icons.icon.model.dto.IconResponseDTO;
 import com.icons.util.ApiUtils;
-import com.icons.util.DataListResponseDTO;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 @Validated
@@ -31,6 +34,10 @@ public class IconMapperImpl implements IconMapper {
 
     @Override
     public IconResponseDTO toDTO(IconEntity entity) {
+        Set<String> countries = CollectionUtils.isEmpty(entity.getCountries()) ?
+                Collections.emptySet() :
+                entity.getCountries().stream().map(CountryEntity::getName).collect(Collectors.toSet());
+
         return new IconResponseDTO(
                 entity.getId(),
                 entity.getImageURL(),
@@ -38,7 +45,7 @@ public class IconMapperImpl implements IconMapper {
                 entity.getCreationDate().format(ApiUtils.OF_PATTERN),
                 entity.getHeight(),
                 entity.getHistoryDescription(),
-                new DataListResponseDTO(entity.getCountries().stream().map(CountryEntity::getName).toList())
+                countries
         );
     }
 }
