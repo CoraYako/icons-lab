@@ -1,6 +1,6 @@
 package com.icons.icon.model.dto;
 
-import com.icons.util.DataListResponseDTO;
+import java.util.Set;
 
 public record IconResponseDTO(
         String id,
@@ -9,6 +9,6 @@ public record IconResponseDTO(
         String creationDate,
         int height,
         String historyDescription,
-        DataListResponseDTO countries
+        Set<String> countries
 ) {
 }

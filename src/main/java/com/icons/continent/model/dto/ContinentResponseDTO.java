@@ -1,11 +1,11 @@
 package com.icons.continent.model.dto;
 
-import com.icons.util.DataListResponseDTO;
+import java.util.Set;
 
 public record ContinentResponseDTO(
         String id,
         String imageURL,
         String name,
-        DataListResponseDTO countries
+        Set<String> countries
 ) {
 }

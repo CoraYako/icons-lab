@@ -1,6 +1,6 @@
 package com.icons.country.model.dto;
 
-import com.icons.util.DataListResponseDTO;
+import java.util.Set;
 
 public record CountryResponseDTO(
         String id,
@@ -9,6 +9,6 @@ public record CountryResponseDTO(
         long population,
         double area,
         String continent,
-        DataListResponseDTO icons
+        Set<String> icons
 ) {
 }
