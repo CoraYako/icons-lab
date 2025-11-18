@@ -7,6 +7,7 @@ import com.icons.continent.model.dto.ContinentUpdateRequestDTO;
 import com.icons.continent.model.mapper.ContinentMapper;
 import com.icons.continent.repository.ContinentRepository;
 import com.icons.exception.*;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -14,9 +15,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -230,6 +237,65 @@ public class ContinentServiceTest {
             verify(continentRepository).existsByName(DUPLICATE_NAME);
             verify(continentRepository, never()).findById(any());
             verify(continentRepository, never()).save(any());
+        }
+    }
+
+    @Nested
+    @DisplayName("Tests for listContinents()")
+    class ListContinentsTests {
+        private final int PAGE_SIZE = 10;
+        private final int PAGE_NUMBER = 0;
+
+        private ContinentResponseDTO buildMockDTO(ContinentEntity entity) {
+            return new ContinentResponseDTO(entity.getId(), entity.getImageURL(), entity.getName(), null);
+        }
+
+        @Test
+        public void shouldReturnPaginatedDTOs_whenContentExist() {
+            ContinentEntity entity1 = new ContinentEntity("UUID_1", "image_url", "America");
+            ContinentEntity entity2 = new ContinentEntity("UUID_2", "image_url", "Europe");
+
+            List<ContinentEntity> continents = List.of(entity1, entity2);
+
+            Pageable pageable = PageRequest.of(PAGE_NUMBER, PAGE_SIZE);
+
+            Page<@NonNull ContinentEntity> mockEntityPage = new PageImpl<>(continents, pageable, continents.size());
+
+            when(continentRepository.findAll(any(Pageable.class))).thenReturn(mockEntityPage);
+
+            when(continentMapper.toDTO(entity1)).thenReturn(buildMockDTO(entity1));
+            when(continentMapper.toDTO(entity2)).thenReturn(buildMockDTO(entity2));
+
+            Page<@NonNull ContinentResponseDTO> resultPage = continentService.listContinents(PAGE_NUMBER);
+
+            verify(continentRepository).findAll(any(Pageable.class));
+            verify(continentMapper, times(2)).toDTO(any(ContinentEntity.class));
+
+            assertThat(resultPage).isNotNull();
+            assertThat(resultPage.getNumber()).isEqualTo(PAGE_NUMBER);
+            assertThat(resultPage.getSize()).isEqualTo(PAGE_SIZE);
+
+            assertThat(resultPage.getContent()).hasSize(continents.size());
+            assertThat(resultPage.getContent().get(0).name()).isEqualTo(entity1.getName());
+            assertThat(resultPage.getContent().get(1).name()).isEqualTo(entity2.getName());
+        }
+
+        @Test
+        public void shouldReturnEmptyPage_whenContentNotExist() {
+            Pageable pageable = PageRequest.of(PAGE_NUMBER, PAGE_SIZE);
+
+            Page<@NonNull ContinentEntity> emptyPage = new PageImpl<>(emptyList(), pageable, 0);
+
+            when(continentRepository.findAll(any(Pageable.class))).thenReturn(emptyPage);
+
+            Page<@NonNull ContinentResponseDTO> resultPage = continentService.listContinents(PAGE_NUMBER);
+
+            verify(continentRepository).findAll(any(Pageable.class));
+            verify(continentMapper, never()).toDTO(any(ContinentEntity.class));
+
+            assertThat(resultPage).isNotNull();
+            assertThat(resultPage.getContent()).isEmpty();
+            assertThat(resultPage.getTotalElements()).isEqualTo(0);
         }
     }
 }
