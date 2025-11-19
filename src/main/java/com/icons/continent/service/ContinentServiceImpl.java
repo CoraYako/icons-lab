@@ -49,8 +49,11 @@ public class ContinentServiceImpl implements ContinentService {
             throw new NullRequestBodyException("Continent");
         if (ApiUtils.isNotValidUUID(id))
             throw new InvalidUUIDException(id);
-        if (continentRepository.existsByName(dto.name()))
-            throw new DuplicatedResourceException("Continent", dto.name());
+        if (Objects.nonNull(dto.name()) && !dto.name().trim().isEmpty()) {
+            if (continentRepository.existsByName(dto.name())) {
+                throw new DuplicatedResourceException("Continent", dto.name());
+            }
+        }
 
         ContinentEntity continent = continentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Continent", id));
