@@ -49,14 +49,8 @@ public class ContinentServiceImpl implements ContinentService {
             throw new NullRequestBodyException("Continent");
         if (ApiUtils.isNotValidUUID(id))
             throw new InvalidUUIDException(id);
-        if (Objects.nonNull(dto.name()) && !dto.name().trim().isEmpty()) {
-            if (continentRepository.existsByName(dto.name())) {
-                throw new DuplicatedResourceException("Continent", dto.name());
-            }
-        }
 
-        ContinentEntity continent = continentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Continent", id));
+        ContinentEntity continent = getById(id);
 
         var continentUpdated = applyUpdates(continent, dto);
 
@@ -86,10 +80,12 @@ public class ContinentServiceImpl implements ContinentService {
 
     private ContinentEntity applyUpdates(ContinentEntity continent, ContinentUpdateRequestDTO dto) {
         if (dto.name() != null && !dto.name().trim().isEmpty())
-            continent.setName(dto.name());
+            if (!Objects.equals(continent.getName(), dto.name()))
+                continent.setName(dto.name());
 
         if (dto.imageURL() != null && !dto.imageURL().trim().isEmpty())
-            continent.setImageURL(dto.imageURL());
+            if (!Objects.equals(continent.getImageURL(), dto.imageURL()))
+                continent.setImageURL(dto.imageURL());
 
         return continent;
     }
