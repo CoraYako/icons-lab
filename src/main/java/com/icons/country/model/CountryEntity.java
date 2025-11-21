@@ -22,14 +22,22 @@ public class CountryEntity implements Serializable {
     private String name;
     private long population;
     private double area;
-    private boolean deleted = false;
+    private final boolean deleted = false;
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "CONTINENT_ID")
     private ContinentEntity continent;
     @ManyToMany(mappedBy = "COUNTRIES", fetch = FetchType.EAGER)
-    private List<IconEntity> icons = new ArrayList<>();
+    private final List<IconEntity> icons = new ArrayList<>();
 
     public CountryEntity() {
+    }
+
+    public CountryEntity(String id, String imageURL, String name, long population, double area) {
+        this.id = id;
+        this.imageURL = imageURL;
+        this.name = name;
+        this.population = population;
+        this.area = area;
     }
 
     public String getId() {
