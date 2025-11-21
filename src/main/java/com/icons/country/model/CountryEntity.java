@@ -7,8 +7,8 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "COUNTIES")
@@ -27,7 +27,7 @@ public class CountryEntity implements Serializable {
     @JoinColumn(name = "CONTINENT_ID")
     private ContinentEntity continent;
     @ManyToMany(mappedBy = "COUNTRIES", fetch = FetchType.EAGER)
-    private final List<IconEntity> icons = new ArrayList<>();
+    private final Set<IconEntity> icons = new HashSet<>();
 
     public CountryEntity() {
     }
@@ -84,7 +84,7 @@ public class CountryEntity implements Serializable {
         this.continent = continent;
     }
 
-    public List<IconEntity> getIcons() {
+    public Set<IconEntity> getIcons() {
         return icons;
     }
 }

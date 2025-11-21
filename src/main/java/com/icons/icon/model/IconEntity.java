@@ -8,8 +8,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "icons")
@@ -23,7 +23,7 @@ public class IconEntity implements Serializable {
     private String name;
     private int height;
     private String historyDescription;
-    private boolean deleted = false;
+    private final boolean deleted = false;
     @DateTimeFormat(pattern = "yyyy/MM/dd")
     @Column(name = "CREATED_AT")
     private LocalDate createdAt;
@@ -33,7 +33,7 @@ public class IconEntity implements Serializable {
             joinColumns = @JoinColumn(name = "ICON_ID", referencedColumnName = "ID"),
             inverseJoinColumns = @JoinColumn(name = "COUNTRY_ID", referencedColumnName = "ID")
     )
-    private List<CountryEntity> countries = new ArrayList<>();
+    private Set<CountryEntity> countries = new HashSet<>();
 
     public IconEntity() {
     }
@@ -82,7 +82,7 @@ public class IconEntity implements Serializable {
         this.createdAt = value;
     }
 
-    public List<CountryEntity> getCountries() {
+    public Set<CountryEntity> getCountries() {
         return countries;
     }
 }

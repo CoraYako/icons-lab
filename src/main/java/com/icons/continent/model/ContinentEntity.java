@@ -4,8 +4,9 @@ import com.icons.country.model.CountryEntity;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "CONTINENTS")
@@ -16,7 +17,7 @@ public class ContinentEntity implements Serializable {
     private String imageURL;
     private String name;
     @OneToMany(mappedBy = "continent", fetch = FetchType.LAZY)
-    private final List<CountryEntity> countries = new ArrayList<>();
+    private final Set<CountryEntity> countries = new HashSet<>();
 
     public ContinentEntity() {
     }
@@ -47,7 +48,7 @@ public class ContinentEntity implements Serializable {
         this.name = value;
     }
 
-    public List<CountryEntity> getCountries() {
+    public Set<CountryEntity> getCountries() {
         return countries;
     }
 }
