@@ -12,7 +12,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "icons")
+@Table(name = "ICONS")
 @SQLDelete(sql = "UPDATE icons SET deleted = true WHERE id=?")
 @SQLRestriction("deleted <> false")
 public class IconEntity implements Serializable {

@@ -26,7 +26,7 @@ public class CountryEntity implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "CONTINENT_ID")
     private ContinentEntity continent;
-    @ManyToMany(mappedBy = "COUNTRIES", fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "countries", fetch = FetchType.EAGER)
     private final Set<IconEntity> icons = new HashSet<>();
 
     public CountryEntity() {
